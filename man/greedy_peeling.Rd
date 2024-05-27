@@ -12,12 +12,14 @@ greedy_peeling(Wp_DSD, lambda)
 \item{lambda}{Parameter for the objective function}
 }
 \value{
-A list with components
-\itemize{
-\item{W_DSD_greedy}{reordered adjacency matrix}
-\item{Clist}{Cluster list}
-\item{Node_Seq}{A vector of reordered nodes}
-\item{removing_node}{Nodes to be removed}
+A list containing:\tabular{ll}{
+\code{W_DSD_greedy} \tab Reordered adjacency matrix \cr
+\tab \cr
+\code{Clist} \tab Cluster list \cr
+\tab \cr
+\code{Node_Seq} \tab A vector of reordered nodes \cr
+\tab \cr
+\code{removing_node} \tab Nodes to be removed \cr
 }
 }
 \description{

@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{sim}}{
 
-A data frame with 100 rows and 100 columns:
+A data frame with 100 subjects and 200 variables:
 \describe{
 \item{V1}{}
 \item{V2}{}

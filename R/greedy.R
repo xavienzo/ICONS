@@ -20,12 +20,12 @@ greedy <- function(Wp, threshold_DSD, lambda){
   Wp_DSD[Wp_DSD < threshold_DSD] <- 0
   
   #store all node lists from each cluster
-  nc <- 1
+  # nc <- 1
   Clist <- numeric()
   CID <- numeric()
   orig_Node <- 1:length(Wp)
   
-  while (length(Clist) < length(Wp) - 2) {
+  while (length(Clist) < ncol(Wp) - 1) {
     # do greedy peeling to get the next cluster
     result <- greedy_peeling(Wp_DSD, lambda)
     Clist_temp <- result$Clist
@@ -35,16 +35,13 @@ greedy <- function(Wp, threshold_DSD, lambda){
     # update adjacency matrix
     Wp_DSD <- Wp_DSD[remaining_node, remaining_node]
     
-    # update
-    p_rem <- mean(rowMeans(Wp_DSD))
-    
     # record nodes
     Clist <- c(Clist, orig_Node[Clist_temp[1:length(Node_Seq)]])
     CID <- c(CID, length(Node_Seq))
     
     # updates
     orig_Node <- orig_Node[remaining_node]
-    nc <- nc + 1
+    # nc <- nc + 1
   }
   
   # uninformative nodes
