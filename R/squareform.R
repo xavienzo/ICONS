@@ -3,11 +3,8 @@
 #' Given a squareform matrix, this function converts it into a vector containing 
 #' the lower triangular part of the matrix (excluding the diagonal).
 #'
-#' @param mat A squareform matrix.
+#' @param mat A square-form matrix.
 #' @return A vector containing the lower triangular part of the matrix.
-#' @examples
-#' mat <- matrix(1:6, nrow = 3)
-#' squareform(mat)
 #' @export
 #' @examples
 #' data(sim)

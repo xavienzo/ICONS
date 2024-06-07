@@ -7,7 +7,7 @@
 squareform(mat)
 }
 \arguments{
-\item{mat}{A squareform matrix.}
+\item{mat}{A square-form matrix.}
 }
 \value{
 A vector containing the lower triangular part of the matrix.
@@ -17,8 +17,6 @@ Given a squareform matrix, this function converts it into a vector containing
 the lower triangular part of the matrix (excluding the diagonal).
 }
 \examples{
-mat <- matrix(1:6, nrow = 3)
-squareform(mat)
 data(sim)
 squareform(sim)
 
