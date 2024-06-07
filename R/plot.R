@@ -61,7 +61,8 @@ plotMatrix <- function(data,
   image(data, col = color_palette,
         useRaster = TRUE, axes = FALSE, ann = FALSE)
   # Add the legend
-  par(fig = c(.9,1,.3,.7), mar = c(1,1,1,2.5), new = TRUE)
+  par(fig = c(.9,1,.2,.8), mar = c(1,1,1,2.5), new = TRUE)
+  # par(fig = c(0.95, 1, 0, 1), mar = c(2, 0, 2, 2), new = TRUE)
   plot(x = rep(1,length(color_legend$value)),
        y = color_legend$value,
        xlim = c(0,1),
@@ -72,7 +73,7 @@ plotMatrix <- function(data,
            y0 = color_legend$value, y1 = color_legend$value,
            col = color_legend$color, lwd = 5)
   axis(side = 4, lwd = 0, las = 2, line = -.75)
-  mtext(text = "", adj = 0, line = 1, cex = 1.2)
+  # mtext(text = "", adj = 0, line = 1, cex = 1.2)
   dev.off()
   cat("Figure has been saved to:", normalizePath(filepath), "\n")
 }

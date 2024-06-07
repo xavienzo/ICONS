@@ -1,27 +1,34 @@
-#' Convert a Squareform Matrix to a Vector
+#' Convert a Square-Form Matrix to a Vector
 #'
-#' Given a squareform matrix, this function converts it into a vector containing
-#' the lower triangular part of the matrix (excluding the diagonal).
+#' Given a distance matrix, this function converts it into a half-vector form,
+#' (a vector of the upper triangular part excluding the diagonal).
 #'
-#' @param mat A square-form matrix.
-#' @return A vector containing the lower triangular part of the matrix.
+#' @param dist A square symmetric matrix.
+#' @return A vector containing the upper triangular part of the matrix.
 #' @export
 #' @examples
 #' data(sim)
-#' squareform(sim)
+#' get_vectorform(sim)
 #'
 #' mat <- matrix(1:6, nrow = 3)
-#' squareform(mat)
+#' get_vectorform(mat)
 
-squareform <- function(mat) {
-  indices <- lower.tri(mat)
-  result <- mat[indices]
-  return(result)
+get_vectorform <- function(dist) {
+  # check matrix form
+  if (!is.matrix(dist)) {
+    stop("Input must be a matrix.")
+  }
+  if (!identical(dist, t(dist))) {
+    return("Input must be a square symmetric matrix.")
+  }
+  # return vector form
+  return(dist[upper.tri(dist)])
 }
 
-#' Compute SigmaU and its Norm
+#' Calculate \eqn{\Sigma_u}{Sigma_u}, the unexplained residual
 #'
-#' This function calculates the SigmaU matrix and its Frobenius norm for given data and clustering results.
+#' This function calculates \eqn{\Sigma_u}{Sigma_u} and its Frobenius norm,
+#' given the data and subnetwork detection results.
 #'
 #' @param data A data matrix.
 #' @param cid A vector of cluster sizes.
@@ -36,8 +43,8 @@ squareform <- function(mat) {
 #' clist <- sample(1:2, 20, replace = TRUE)
 #' result <- sigmau(data, cid, clist)
 #' print(result)
-#'
-sigmau <- function(data, cid, clist) {
+
+get_sigmau <- function(data, cid, clist) {
   K <- length(cid)
   n <- nrow(data)
   p <- ncol(data)
@@ -49,7 +56,6 @@ sigmau <- function(data, cid, clist) {
   Y_Data <- data[, clist]
   YT_Data <- t(Y_Data)
   YT_mean <- apply(YT_Data, 1, mean)
-  # YT_Data_Cent <- sweep(YT_Data, 2, YT_mean)
   YT_Data_Cent <- YT_Data - matrix(rep(YT_mean, n), p, n, byrow = FALSE)
 
   F_HAT_UB <- solve(t(L) %*% L) %*% (t(L) %*% YT_Data_Cent)
