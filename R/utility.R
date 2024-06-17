@@ -9,9 +9,6 @@
 #' @examples
 #' data(sim)
 #' get_vectorform(cor(sim))
-#'
-#' mat <- matrix(1:6, nrow = 3)
-#' get_vectorform(mat)
 
 get_vectorform <- function(dist) {
   # check matrix form

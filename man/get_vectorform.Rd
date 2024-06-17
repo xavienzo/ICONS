@@ -19,7 +19,4 @@ Given a distance matrix, this function converts it into a half-vector form,
 \examples{
 data(sim)
 get_vectorform(cor(sim))
-
-mat <- matrix(1:6, nrow = 3)
-get_vectorform(mat)
 }
