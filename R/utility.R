@@ -8,7 +8,7 @@
 #' @export
 #' @examples
 #' data(sim)
-#' get_vectorform(sim)
+#' get_vectorform(cor(sim))
 #'
 #' mat <- matrix(1:6, nrow = 3)
 #' get_vectorform(mat)
@@ -19,7 +19,7 @@ get_vectorform <- function(dist) {
     stop("Input must be a matrix.")
   }
   if (!identical(dist, t(dist))) {
-    return("Input must be a square symmetric matrix.")
+    stop("Input must be a square symmetric matrix.")
   }
   # return vector form
   return(dist[upper.tri(dist)])
@@ -36,13 +36,6 @@ get_vectorform <- function(dist) {
 #'
 #' @return A list containing the SigmaU matrix (`sigma_u`) and its Frobenius norm (`sigma_u_norm`).
 #' @export
-#'
-#' @examples
-#' data <- matrix(runif(200), nrow = 20)
-#' cid <- c(5, 5)
-#' clist <- sample(1:2, 20, replace = TRUE)
-#' result <- sigmau(data, cid, clist)
-#' print(result)
 
 get_sigmau <- function(data, cid, clist) {
   K <- length(cid)

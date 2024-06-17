@@ -3,18 +3,9 @@
 \docType{data}
 \name{sim}
 \alias{sim}
-\title{Simulated adjacency matrix}
+\title{Simulated data}
 \format{
-\subsection{\code{sim}}{
-
-A data frame with 100 subjects and 200 variables:
-\describe{
-\item{V1}{}
-\item{V2}{}
-\item{V3}{}
-...
-}
-}
+A data frame with 100 subjects and 200 variables.
 }
 \source{
 null
@@ -23,6 +14,14 @@ null
 sim
 }
 \description{
-details to be filled in
+The data contains variables with complex inter-community and intra-community
+correlations.
+}
+\examples{
+data(sim)
+matrix <- cor(sim)
+plotMatrix(data = matrix)
+results <- dense(matrix, 0.5, 0.5)
+results$CID
 }
 \keyword{datasets}

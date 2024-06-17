@@ -6,7 +6,7 @@
 \usage{
 plotMatrix(
   data,
-  filepath,
+  filepath = file.path(getwd(), "plot.tiff"),
   width = 850,
   height = 800,
   palette = "viridis",
@@ -16,7 +16,7 @@ plotMatrix(
 \arguments{
 \item{data}{A numeric matrix.}
 
-\item{filepath}{The output file path.}
+\item{filepath}{The output file path, default is the current working directory}
 
 \item{width}{Width of the output image in pixels, default is 850.}
 
@@ -35,5 +35,5 @@ at the specified filepath in one of several supported formats.
 }
 \examples{
 mat <- matrix(rnorm(100), nrow = 10)
-plotMatrix(mat, "heatmap.tiff")
+plotMatrix(mat)
 }

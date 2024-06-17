@@ -1,14 +1,16 @@
-#' Simulated adjacency matrix
+#' Simulated data
 #'
-#' details to be filled in
+#' The data contains variables with complex inter-community and intra-community
+#' correlations.
 #'
-#' @format ## `sim`
-#' A data frame with 100 subjects and 200 variables:
-#' \describe{
-#'   \item{V1}{}
-#'   \item{V2}{}
-#'   \item{V3}{}
-#'   ...
-#' }
+#' @format
+#' A data frame with 100 subjects and 200 variables.
 #' @source null
+#' @examples
+#' data(sim)
+#' matrix <- cor(sim)
+#' plotMatrix(data = matrix)
+#' results <- dense(matrix, 0.5, 0.5)
+#' results$CID
+
 "sim"

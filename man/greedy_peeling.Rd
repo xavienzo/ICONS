@@ -2,35 +2,43 @@
 % Please edit documentation in R/dense.R
 \name{greedy_peeling}
 \alias{greedy_peeling}
-\title{Greedy Peeling}
+\title{Greedy peeling algorithm with \eqn{l_0}{l_0} shrinkage}
 \usage{
-greedy_peeling(Wp_DSD, lambda)
+greedy_peeling(W_greedy, lambda)
 }
 \arguments{
-\item{Wp_DSD}{Input adjacency matrix}
+\item{W_greedy}{Input adjacency matrix}
 
-\item{lambda}{Parameter for the objective function}
+\item{lambda}{Tuning parameter \eqn{\lambda}{lambda} for greedy peeling algorithm}
 }
 \value{
 A list containing:\tabular{ll}{
-\code{W_DSD_greedy} \tab Reordered adjacency matrix \cr
+\code{W_interim} \tab Reordered adjacency matrix \cr
 \tab \cr
-\code{Clist} \tab Cluster list \cr
+\code{Clist} \tab Node index of the reordered adjacency matrix \cr
 \tab \cr
-\code{Node_Seq} \tab A vector of reordered nodes \cr
+\code{Node_Seq} \tab Node index of the extracted dense subgraph \cr
 \tab \cr
-\code{removing_node} \tab Nodes to be removed \cr
+\code{removing_node} \tab Index of nodes not in the extracted dense subgraph \cr
 }
 }
 \description{
-A simple implementation of the greedy algorithm from the "Denser than the Densest subgraph" paper (Tsourakakis 2013)
-using the generalized objective function (Shuo 2023).
+A simple implementation of the greedy algorithm from the "Denser than the Densest subgraph" paper (Tsourakakis, 2013)
+using the generalized objective function (Chen, 2023).
 }
 \details{
 Note that this function only extracts ONE dense subgraph.
 }
 \examples{
 data(sim)
-greedy_peeling(sim, 1.4)
-greedy_peeling(sim, 1.6)
+matrix <- cor(sim)
+greedy_peeling(matrix, 0.6)
+greedy_peeling(matrix, 0.3)
+}
+\references{
+Chen, S., Zhang, Y., Wu, Q., Bi, C., Kochunov, P., & Hong, L. E. (2024).
+Identifying covariate-related subnetworks for whole-brain connectome analysis. Biostatistics (Oxford, England), 25(2), 541–558. https://doi.org/10.1093/biostatistics/kxad007
+
+Tsourakakis, C., Bonchi, F., Gionis, A., Gullo, F., & Tsiarli, M. (2013). Denser than the densest subgraph: Extracting optimal quasi-cliques with quality guarantees.
+Proceedings of the 19th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining.
 }

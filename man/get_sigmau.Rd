@@ -20,11 +20,3 @@ A list containing the SigmaU matrix (\code{sigma_u}) and its Frobenius norm (\co
 This function calculates \eqn{\Sigma_u}{Sigma_u} and its Frobenius norm,
 given the data and subnetwork detection results.
 }
-\examples{
-data <- matrix(runif(200), nrow = 20)
-cid <- c(5, 5)
-clist <- sample(1:2, 20, replace = TRUE)
-result <- sigmau(data, cid, clist)
-print(result)
-
-}

@@ -4,7 +4,7 @@
 #' at the specified filepath in one of several supported formats.
 #'
 #' @param data A numeric matrix.
-#' @param filepath The output file path.
+#' @param filepath The output file path, default is the current working directory
 #' @param width Width of the output image in pixels, default is 850.
 #' @param height Height of the output image in pixels, default is 800.
 #' @param palette Type of color palette to use: "jet" or "viridis", default is "viridis".
@@ -16,9 +16,9 @@
 #' @export
 #' @examples
 #' mat <- matrix(rnorm(100), nrow = 10)
-#' plotMatrix(mat, "heatmap.tiff")
+#' plotMatrix(mat)
 plotMatrix <- function(data,
-                       filepath,
+                       filepath = file.path(getwd(), "plot.tiff"),
                        width = 850,
                        height = 800,
                        palette = "viridis",
@@ -43,7 +43,7 @@ plotMatrix <- function(data,
   }
   # Record color to create legend
   color_legend <- data.frame("color" = color_palette,
-                        "value" = seq(from = min(data), to = max(data), along.with = 1:256))
+                        "value" = seq(from = min(data, na.rm = T), to = max(data, na.rm = T), along.with = 1:256))
 
   # Create the figure ===================
 

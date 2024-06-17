@@ -12,9 +12,9 @@
 #' @export
 #'
 #' @examples
-#' Wp <- matrix(runif(100), nrow = 10)
 #' data <- matrix(runif(200), nrow = 20)
-#' prctile_vec <- c(10, 20, 30)
+#' Wp <- cor(data)
+#' prctile_vec <- c(0.1, 0.5, 0.8)
 #' lam_vec <- c(0.1, 0.5, 1.0)
 #' result <- param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
 #' print(result)
@@ -38,7 +38,7 @@ param_tuning_sigmau <- function(Wp, data, prctile_vec, lam_vec) {
       r <- gr[j]
 
       # Perform greedy clustering with the current cut-off and lambda
-      result <- greedy(Wp, r, lambda)
+      result <- dense(Wp, r, lambda)
       Clist_temp <- result$Clist
       CID_temp <- result$CID
 
