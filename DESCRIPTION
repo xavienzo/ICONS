@@ -1,6 +1,6 @@
 Package: SCFA
 Title: Community Detection and Semi-confirmatory Factor Analysis
-Version: 0.1.0.9003
+Version: 0.1.0.9004
 Authors@R: 
     person(given = "Yezhi", family = "Pan", 
 	   email = "yezhipan7@gmail.com", 
