@@ -55,14 +55,14 @@ plotMatrix(matrix)
 # Heatmap of the reordered matrix showing subnetwork structures
 plotMatrix(results$W_dense)
 ```
-<div style="display: flex; justify-content: space-between; align-items: flex-start;">
-  <div style="text-align: center; width: 48%;">
+<div style="display: flex; justify-content: space-between;">
+  <div style="text-align: center; width: 40%;">
     <p><strong>Original</strong></p>
-    <img src="https://github.com/user-attachments/assets/5da11b49-108e-4965-993d-75f83688281a" alt="sim" style="width: 100%; max-width: 100%;"/>
+    <img src="https://github.com/user-attachments/assets/5da11b49-108e-4965-993d-75f83688281a" alt="sim" style="width: 40%;"/>
   </div>
-  <div style="text-align: center; width: 48%;">
+  <div style="text-align: center; width: 40%;">
     <p><strong>After subnetwork extraction</strong></p>
-    <img src="https://github.com/user-attachments/assets/7f8a0133-ba30-4ea5-9cba-03ad104cec84" alt="sim_dense" style="width: 100%; max-width: 100%;"/>
+    <img src="https://github.com/user-attachments/assets/7f8a0133-ba30-4ea5-9cba-03ad104cec84" alt="sim_dense" style="width: 40%;"/>
   </div>
 </div>
 
