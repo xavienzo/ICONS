@@ -1,7 +1,8 @@
-#' Parameter Tuning for SigmaU
+#' Parameter Tuning for Optimal Subnetwork Structures
 #'
-#' This function tunes parameters for the SigmaU function by evaluating different
-#' combinations of lambda and cut-off values.
+#' This function tunes parameters to identify optimal subnetwork structures
+#' by minimizing the Frobenius norm of the residual covariance matrix.
+#' It uses a grid search over different combinations of lambda and cut-off values.
 #'
 #' @param Wp A symmetric matrix representing pairwise potentials (weights).
 #' @param data A data matrix used in the SigmaU function.

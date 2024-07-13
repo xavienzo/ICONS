@@ -2,7 +2,7 @@
 % Please edit documentation in R/parameter.R
 \name{param_tuning_sigmau}
 \alias{param_tuning_sigmau}
-\title{Parameter Tuning for SigmaU}
+\title{Parameter Tuning for Optimal Subnetwork Structures}
 \usage{
 param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
 }
@@ -19,8 +19,9 @@ param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
 A list containing the optimal lambda value (\code{lambda_out}) and the corresponding cut-off value (\code{cut_out}).
 }
 \description{
-This function tunes parameters for the SigmaU function by evaluating different
-combinations of lambda and cut-off values.
+This function tunes parameters to identify optimal subnetwork structures
+by minimizing the Frobenius norm of the residual covariance matrix.
+It uses a grid search over different combinations of lambda and cut-off values.
 }
 \examples{
 data <- matrix(runif(200), nrow = 20)
