@@ -55,6 +55,11 @@ plotMatrix(matrix)
 # Heatmap of the reordered matrix showing subnetwork structures
 plotMatrix(results$W_dense)
 ```
+<div style="display: flex; justify-content: space-between;">
+  <img src="https://github.com/user-attachments/assets/5da11b49-108e-4965-993d-75f83688281a" alt="sim" style="width: 48%;"/>
+  <img src="https://github.com/user-attachments/assets/7f8a0133-ba30-4ea5-9cba-03ad104cec84" alt="sim_dense" style="width: 48%;"/>
+</div>
+
 ### SCFA
 ```r
 # perform SCFA
