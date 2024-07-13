@@ -1,7 +1,7 @@
 # SCFA: Semi-confirmatory factor analysis and subnetwork extraction tool
 
 ## Installation
-You can install the developer version `scfa` package directly from GitHub using the `devtools` package:
+You can install the development version `scfa` package directly from GitHub using the `devtools` package:
 
 ```r
 # Install devtools if you haven't already
@@ -14,6 +14,7 @@ Major versions will be uploaded to CRAN. Updates will be annouced here when avai
 
 ## Usage
 
+### Example dataset
 ```r
 # A simulated dataset named `sim` with 100 variables and 100 observations
 data(sim)

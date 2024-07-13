@@ -7,7 +7,7 @@
 #' @param filepath The output file path, default is the current working directory
 #' @param width Width of the output image in pixels, default is 850.
 #' @param height Height of the output image in pixels, default is 800.
-#' @param palette Type of color palette to use: "jet" or "viridis", default is "viridis".
+#' @param palette Type of color palette to use: "jet" or "viridis", default is "jet".
 #' @param format File format for saving the image, default is "tiff". Supported formats: "tiff", "png", "jpeg", "svg".
 #' @return Nothing is explicitly returned; an image file is saved to the designated file path.
 #' @importFrom grDevices colorRampPalette dev.off jpeg png svg tiff
@@ -21,7 +21,7 @@ plotMatrix <- function(data,
                        filepath = file.path(getwd(), "plot.tiff"),
                        width = 850,
                        height = 800,
-                       palette = "viridis",
+                       palette = "jet",
                        format = "tiff"
                        ) {
   # Sanity check ===================

@@ -9,7 +9,7 @@ plotMatrix(
   filepath = file.path(getwd(), "plot.tiff"),
   width = 850,
   height = 800,
-  palette = "viridis",
+  palette = "jet",
   format = "tiff"
 )
 }
@@ -22,7 +22,7 @@ plotMatrix(
 
 \item{height}{Height of the output image in pixels, default is 800.}
 
-\item{palette}{Type of color palette to use: "jet" or "viridis", default is "viridis".}
+\item{palette}{Type of color palette to use: "jet" or "viridis", default is "jet".}
 
 \item{format}{File format for saving the image, default is "tiff". Supported formats: "tiff", "png", "jpeg", "svg".}
 }
