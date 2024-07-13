@@ -55,7 +55,7 @@ plotMatrix(matrix)
 # Heatmap of the reordered matrix showing subnetwork structures
 plotMatrix(results$W_dense)
 ```
-<div style="display: flex; justify-content: space-between; align-items: center;">
+<div style="display: flex; justify-content: space-between;">
   <div style="text-align: center; width: 48%;">
     <p><strong>Original</strong></p>
     <img src="https://github.com/user-attachments/assets/5da11b49-108e-4965-993d-75f83688281a" alt="sim" style="width: 48%;"/>
