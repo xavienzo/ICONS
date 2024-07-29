@@ -54,7 +54,7 @@ greedy_peeling <- function(W_greedy, lambda){
 
     # Calculate score_temp
     ite <- ite + 1
-    score_temp <- (sum_W_temp / 2) / ((N - ite) * (2 * lambda))
+    score_temp <- (sum_W_temp / 2) / ((N - ite) ^ (2 * lambda))
     Recording_Matrix[N - i + 1, ] <- c(Recording_Clist[idx_min_temp], score_temp)
   }
 
