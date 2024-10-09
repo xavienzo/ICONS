@@ -23,7 +23,7 @@ plotMatrix <- function(data,
                        height = 800,
                        palette = "jet",
                        format = "tiff"
-                       ) {
+) {
   # Sanity check ===================
   if (!is.matrix(data)) {
     stop("Input must be a matrix.")
@@ -43,7 +43,7 @@ plotMatrix <- function(data,
   }
   # Record color to create legend
   color_legend <- data.frame("color" = color_palette,
-                        "value" = seq(from = min(data, na.rm = T), to = max(data, na.rm = T), along.with = 1:256))
+                             "value" = seq(from = min(data, na.rm = T), to = max(data, na.rm = T), along.with = 1:256))
 
   # Create the figure ===================
 
@@ -58,8 +58,30 @@ plotMatrix <- function(data,
 
   # Leave margins for legend
   par(fig = c(0,.9,0,1), mar = c(2,2,2,0))
-  image(data, col = color_palette,
+  image(t(data[nrow(data):1, ]), col = color_palette,
         useRaster = TRUE, axes = FALSE, ann = FALSE)
+
+  # Function to select indices and normalize to [0, 1] range
+  select_indices <- function(total_length, max_labels) {
+    step <- max(1, ceiling(total_length / max_labels))
+    indices <- seq(0, total_length, by = step)[-1]
+    # Normalize indices to [0, 1]
+    normalized_indices <- indices / total_length
+    return(list(indices = indices, normalized = normalized_indices))
+  }
+
+  # Determine how many labels to show
+  max_labels_x <- 5  # Maximum labels for x-axis
+  max_labels_y <- 5  # Maximum labels for y-axis
+
+  # Select indices
+  x_labels <- select_indices(ncol(data), max_labels_x)
+  y_labels <- select_indices(nrow(data), max_labels_y)
+
+  # Add custom axis labels with normalized positions
+  axis(1, at = x_labels$normalized, labels = x_labels$indices)  # X-axis
+  axis(2, at = y_labels$normalized, labels = rev(y_labels$indices))  # Y-axis (reversed to match heatmap orientation)
+
   # Add the legend
   par(fig = c(.9,1,.2,.8), mar = c(1,1,1,2.5), new = TRUE)
   # par(fig = c(0.95, 1, 0, 1), mar = c(2, 0, 2, 2), new = TRUE)
