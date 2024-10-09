@@ -1,13 +1,13 @@
-# SCFA: Semi-confirmatory factor analysis and subnetwork extraction tool
+# ICON: Integrative analysis of Covariance matrix and network structure
 
 ## Installation
-You can install the development version `scfa` package directly from GitHub using the `devtools` package:
+You can install the development version `ICON` package directly from GitHub using the `devtools` package:
 
 ```r
 # Install devtools if you haven't already
 install.packages("devtools")
 # Install SCFA from GitHub
-devtools::install_github("xavienzo/SCFA")
+devtools::install_github("xavienzo/ICON")
 ```
 
 Major versions will be uploaded to CRAN. Updates will be annouced here when available.
@@ -67,7 +67,7 @@ plotMatrix(results$W_dense)
   </div>
 </div>
 
-### SCFA
+### SCFA (Semi-confirmatory factor analysis)
 ```r
 # perform SCFA
 fa <- scfa(data, results$CID, results$Clist)

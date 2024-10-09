@@ -1,4 +1,4 @@
-# SCFA (development version)
+# ICON (development version)
 
 # SCFA 0.1.0.9004
 
