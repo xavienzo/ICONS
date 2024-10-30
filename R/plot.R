@@ -88,7 +88,7 @@ plotMatrix <- function(z,
     par("yaxp")
   }
   at.y <- pretty(axp.y[1]:axp.y[2], axp.y[3])
-  at.y.r <- max(at.y) - at.y + 1
+  at.y.r <- max(ncol(z)) - at.y + 1
   axis(2, at.y.r, labels = at.y, las = 1)
 
   box()
