@@ -95,6 +95,7 @@ plotMatrix <- function(z,
 
   # Add the legend
   par(mar = c(5, 0, 4, 3))
+
   plot(x = rep(1,length(color_legend$value)),
        y = color_legend$value,
        xlim = c(0,1),
@@ -105,7 +106,9 @@ plotMatrix <- function(z,
   segments(x0 = 0, x1 = 1,
            y0 = color_legend$value, y1 = color_legend$value,
            col = color_legend$color, lwd = 5)
-  axis(side = 4, lwd = 0, las = 2, line = -.75)
+
+  at.col <- pretty((10*zlim[1]):(10*zlim[2]), 5)/10
+  axis(side = 4, at.col, lwd = 0, las = 2, line = -.75)
 
   box()
 
