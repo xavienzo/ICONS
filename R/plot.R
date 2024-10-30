@@ -47,7 +47,7 @@ plotMatrix <- function(z,
     # Start the appropriate graphics device
     switch(tolower(format),
            "tiff" = tiff(filename = filepath, width = width, height = height, res = res, compression = "lzw"),
-           "png" = png(filename = filepath, width = width, height = height, res = res, compression = "lzw"),
+           "png" = png(filename = filepath, width = width, height = height, res = res),
            "jpeg" = jpeg(filename = filepath, width = width, height = height, res = res),
            "svg" = svg(filename = filepath, width = width, height = height),
            stop("Unsupported file format. Use 'tiff', 'png', 'jpeg', or 'svg'.")
