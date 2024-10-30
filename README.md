@@ -1,13 +1,13 @@
-# ICON: Integrative analysis of Covariance matrix and network structure
+# ICONS: Integrative analysis of COvariance matrix and Network Structure
 
 ## Installation
-You can install the development version `ICON` package directly from GitHub using the `devtools` package:
+You can install the development version `ICONS` package directly from GitHub using the `devtools` package:
 
 ```r
 # Install devtools if you haven't already
 install.packages("devtools")
 # Install SCFA from GitHub
-devtools::install_github("xavienzo/ICON")
+devtools::install_github("xavienzo/ICONS")
 ```
 
 Major versions will be uploaded to CRAN. Updates will be annouced here when available.

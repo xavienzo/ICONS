@@ -1,5 +1,5 @@
-Package: ICON
-Title: Integrative analysis of Covariance matrix and network structure
+Package: ICONS
+Title: Integrative analysis of covariance matrix and network structure
 Version: 0.1.0.9005
 Authors@R: 
     person(given = "Yezhi", family = "Pan", 
@@ -7,7 +7,7 @@ Authors@R:
 	   role = c("aut", "cre"),
            comment = c(ORCID = "0009-0001-4014-0302"))
 Description: This package provides tools for performing community detection and semi-confirmatory factor analysis in statistical computing environments.
-License: MIT + file LICENSE
+License: MIT + file LICENSE.md
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1

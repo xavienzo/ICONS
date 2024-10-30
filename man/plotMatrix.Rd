@@ -5,33 +5,42 @@
 \title{Visualize a matrix as a heatmap and save it to a file}
 \usage{
 plotMatrix(
-  data,
+  z,
   filepath = file.path(getwd(), "plot.tiff"),
-  width = 850,
-  height = 800,
-  palette = "jet",
-  format = "tiff"
+  save.image = F,
+  width = 2500,
+  height = 2350,
+  res = 300,
+  format = "tiff",
+  ...
 )
 }
 \arguments{
-\item{data}{A numeric matrix.}
+\item{z}{A numeric matrix to be plotted. Must be numeric and two-dimensional.}
 
-\item{filepath}{The output file path, default is the current working directory}
+\item{filepath}{Character. The file path where the plot image will be saved if \code{save.image} is \code{TRUE}. Default is "plot.tiff" in the working directory.}
 
-\item{width}{Width of the output image in pixels, default is 850.}
+\item{save.image}{Logical. If \code{TRUE}, saves the plot to a file specified by \code{filepath}. Default is \code{FALSE}.}
 
-\item{height}{Height of the output image in pixels, default is 800.}
+\item{width}{Integer. Width of the saved image, in pixels. Default is 2500.}
 
-\item{palette}{Type of color palette to use: "jet" or "viridis", default is "jet".}
+\item{height}{Integer. Height of the saved image, in pixels. Default is 2350.}
 
-\item{format}{File format for saving the image, default is "tiff". Supported formats: "tiff", "png", "jpeg", "svg".}
+\item{res}{Integer. Resolution of the saved image, in ppi. Default is 300.}
+
+\item{format}{Character. Format of the saved image. Options are \code{"tiff"}, \code{"png"}, \code{"jpeg"}, or \code{"svg"}. Default is \code{"tiff"}.}
+
+\item{...}{Additional graphical parameters to pass to the \code{image} function, such as axis properties.}
 }
 \value{
-Nothing is explicitly returned; an image file is saved to the designated file path.
+The function does not return any values. If \code{save.image} is \code{TRUE}, a message is printed to the console indicating the file path where the image was saved.
 }
 \description{
-This function creates a heatmap to visualize a numeric matrix. The heatmap is saved to a file
-at the specified filepath in one of several supported formats.
+Creates a heatmap visualization of a numeric matrix with a jet-like color palette.
+}
+\details{
+This function plots a heatmap of a matrix with a color palette similar to the jet color map in MATLAB.
+If \code{save.image} is \code{TRUE}, the plot is saved in the format and location specified by \code{filepath} and \code{format}.
 }
 \examples{
 mat <- matrix(rnorm(100), nrow = 10)

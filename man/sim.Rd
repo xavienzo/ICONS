@@ -20,7 +20,7 @@ correlations.
 \examples{
 data(sim)
 matrix <- cor(sim)
-plotMatrix(data = matrix)
+plotMatrix(z = matrix)
 results <- dense(matrix, 0.5, 0.5)
 results$CID
 }
