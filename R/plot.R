@@ -107,7 +107,10 @@ plotMatrix <- function(z,
            y0 = color_legend$value, y1 = color_legend$value,
            col = color_legend$color, lwd = 5)
 
-  at.col <- pretty((10*zlim[1]):(10*zlim[2]), 5)/10
+  at.col.min <- ceiling(zlim[1] * 10) / 10  # Round up to nearest 0.1
+  at.col.max <- floor(zlim[2] * 10) / 10      # Round down to nearest 0.1
+  at.col <- seq(at.col.min, at.col.max, length.out = 5)
+
   axis(side = 4, at.col, lwd = 0, las = 2, line = -.75)
 
   box()
