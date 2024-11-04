@@ -34,8 +34,8 @@ results$W_dense
 ### Parameter tuning
 ```r
 # specify a vector of cutout thresholds and a vector of lambdas for grid search
-prctile_vec = seq(94, 99, by = 0.5)
-lam_vec = seq(0.4, 0.8, length.out = 5)
+prctile_vec <- seq(94, 99, by = 0.5)
+lam_vec <- seq(0.4, 0.8, length.out = 5)
 
 # grid search
 param <- param_tuning_sigmau(matrix, sim, prctile_vec, lam_vec)
