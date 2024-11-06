@@ -35,23 +35,31 @@ get_vectorform <- function(dist) {
 #' @importFrom stats cov quantile
 #' @export
 
-get_sigmau <- function(data, cid, clist) {
-
-  factor_analysis <- scfa(data, cid, clist)
+get_sigmau <- function(data, CID, Clist) {
+  p <- ncol(data)
+  factor_analysis <- scfa(data, CID, Clist)
+  p_temp <- ncol(factor_analysis$x)
   F_HAT_UB <- factor_analysis$factorscore
+  # F_HAT_UB <- F_HAT_UB[-nrow(F_HAT_UB), ]
   L <- factor_analysis$loading
-  Y_Data <- factor_analysis$x
+  # L <- L[, -ncol(L)]
 
   sigma_f <- cov(t(F_HAT_UB))
-  sigma <- cov(Y_Data)
+  sigma <- cov(data[, Clist])
 
   lsigmaflt <- L %*% sigma_f %*% t(L)
-  sigma_u <- sigma - lsigmaflt
+  lsigmaflt_full <- matrix(0, p, p)
 
+  # Place the 135 x 135 matrix at the top-left corner
+  lsigmaflt_full[1:p_temp, 1:p_temp] <- lsigmaflt
+
+  sigma_u <- sigma - lsigmaflt_full
+  diag(sigma_u) <- 0
   sigma_u_norm <- norm(sigma_u, type = "F")
 
   return(list(sigma_u = sigma_u, sigma_u_norm = sigma_u_norm))
 }
+
 
 #' Get Indices of Submatrices from a Block-Structured Adjacency Matrix
 #'
