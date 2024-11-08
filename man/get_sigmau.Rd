@@ -4,7 +4,7 @@
 \alias{get_sigmau}
 \title{Calculate \eqn{\Sigma_u}{Sigma_u}, the unexplained residual}
 \usage{
-get_sigmau(data, cid, clist)
+get_sigmau(data, CID, Clist)
 }
 \arguments{
 \item{data}{A data matrix.}

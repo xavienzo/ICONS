@@ -46,9 +46,9 @@ param_tuning_sigmau <- function(Wp, data, prctile_vec, lam_vec) {
       # Calculate SigmaU for the current clustering
       sigmau_result <- get_sigmau(data, CID_temp, Clist_temp)
       sigmau_norm <- sigmau_result$sigma_u_norm
-
+      sigmau_norm_d <- sigmau_result$sigma_u_diag_norm
       # Store the SigmaU value with a penalty for the number of clusters
-      sigmau_vec[i, j] <- sigmau_norm #+ log(length(CID_temp))
+      sigmau_vec[i, j] <- sigmau_norm + sigmau_norm_d#+ log(length(CID_temp))
     }
   }
 

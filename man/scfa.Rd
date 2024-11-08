@@ -4,7 +4,7 @@
 \alias{scfa}
 \title{Semi-Confirmatory Factor Analysis}
 \usage{
-scfa(data, cid, clist)
+scfa(data, CID, Clist)
 }
 \arguments{
 \item{data}{A data frame or matrix where rows represent observations and columns represent variables.}
