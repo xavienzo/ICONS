@@ -1,6 +1,6 @@
 Package: ICONS
 Title: Integrative analysis of covariance matrix and network structure
-Version: 0.1.0.9006
+Version: 0.1.1
 Authors@R: 
     person(given = "Yezhi", family = "Pan", 
 	   email = "yezhipan7@gmail.com", 

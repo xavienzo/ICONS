@@ -1,4 +1,10 @@
-# ICONS (development version)
+# ICONS 0.1.1
+# ICONS 0.1.1
+* New version of SCFA: now k-1 factor scores are returned, with the singleton set removed.
+* New version of entropy estimation: sigma u now is estimated from cov(X-FL^T), instead of covariance matrix subtraction.
+* New version of parameter tuning: the objective function now considers a penalty term on diagnal terms.
+* Function `get_sigmau` was separated from utility functions and now stored in `entropy.R` 
+
 # ICONS 0.1.0.9006
 * Changed package name from ICON to ICONS.
 * Changed `plotMatrix` function to a brand new version that has prettier, more flexible axis labeling and visualizes matices in its intrinsic order.
