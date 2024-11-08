@@ -3,12 +3,15 @@
 #' This function performs a semi-confirmatory factor analysis (SCFA) on the provided dataset.
 #'
 #' @param data A data frame or matrix where rows represent observations and columns represent variables.
-#' @param cid A numeric vector indicating the number of variables associated with each factor.
-#' @param clist A numeric vector indicating the column indices of the variables to be used in the analysis.
+#' @param CID A numeric vector indicating the number of variables associated with each factor.
+#' @param Clist A numeric vector indicating the column indices of the variables to be used in the analysis.
 #'
 #' @return A list containing:
 #' \item{loading}{A matrix of factor loadings.}
 #' \item{factorscore}{A matrix of estimated factor scores.}
+#' \item{n.network}{Integer. Number of factors.}
+#' \item{n.var}{Integer. Number of variables.}
+#' \item{n.obs}{Integer. Number of observations.}
 #'
 #' @export
 
@@ -34,7 +37,7 @@ scfa <- function(data, CID, Clist) {
 
   return(list(loading = L,
               factorscore = F_HAT,
-              x = X,
+              #x = X,
               n.network = k,
               n.var = p,
               n.obs = n))

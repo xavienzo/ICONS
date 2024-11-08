@@ -9,14 +9,17 @@ scfa(data, CID, Clist)
 \arguments{
 \item{data}{A data frame or matrix where rows represent observations and columns represent variables.}
 
-\item{cid}{A numeric vector indicating the number of variables associated with each factor.}
+\item{CID}{A numeric vector indicating the number of variables associated with each factor.}
 
-\item{clist}{A numeric vector indicating the column indices of the variables to be used in the analysis.}
+\item{Clist}{A numeric vector indicating the column indices of the variables to be used in the analysis.}
 }
 \value{
 A list containing:
 \item{loading}{A matrix of factor loadings.}
 \item{factorscore}{A matrix of estimated factor scores.}
+\item{n.network}{Integer. Number of factors.}
+\item{n.var}{Integer. Number of variables.}
+\item{n.obs}{Integer. Number of observations.}
 }
 \description{
 This function performs a semi-confirmatory factor analysis (SCFA) on the provided dataset.
