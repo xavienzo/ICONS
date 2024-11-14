@@ -1,4 +1,12 @@
-# ICONS 0.1.1
+# ICONS 0.1.2
+
+# ICONS
+
+# ICONS 0.1.2
+* Introduced option of parallel computing in parameter tuning
+* Added option of moment estimator vs. MLE estimator of sigma_u in SCFA
+* Removed `entropy.R` and merged SCFA with sigma_u estimation functions
+
 # ICONS 0.1.1
 * New version of SCFA: now k-1 factor scores are returned, with the singleton set removed.
 * New version of entropy estimation: sigma u now is estimated from cov(X-FL^T), instead of covariance matrix subtraction.
