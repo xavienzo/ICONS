@@ -4,7 +4,7 @@
 \alias{scfa}
 \title{Semi-Confirmatory Factor Analysis}
 \usage{
-scfa(data, CID, Clist)
+scfa(data, CID, Clist, method = "Sample")
 }
 \arguments{
 \item{data}{A data frame or matrix where rows represent observations and columns represent variables.}
@@ -12,14 +12,23 @@ scfa(data, CID, Clist)
 \item{CID}{A numeric vector indicating the number of variables associated with each factor.}
 
 \item{Clist}{A numeric vector indicating the column indices of the variables to be used in the analysis.}
+
+\item{method}{Character. Method of residual term estimation: "Sample" or "MLE".}
 }
 \value{
 A list containing:
+\describe{
 \item{loading}{A matrix of factor loadings.}
 \item{factorscore}{A matrix of estimated factor scores.}
+\item{sigma_u}{Matrix of off-diagonal residuals (Sample or MLE).}
+\item{sigma_u_norm}{Frobenius norm of sigma_u.}
+\item{sigma_u_diag}{Diagonalized residuals (Sample or MLE).}
+\item{sigma_u_diag_norm}{Frobenius norm of sigma_u_diag.}
 \item{n.network}{Integer. Number of factors.}
 \item{n.var}{Integer. Number of variables.}
 \item{n.obs}{Integer. Number of observations.}
+\item{method}{The chosen estimation method.}
+}
 }
 \description{
 This function performs a semi-confirmatory factor analysis (SCFA) on the provided dataset.

@@ -4,7 +4,15 @@
 \alias{param_tuning_sigmau}
 \title{Parameter Tuning for Optimal Subnetwork Structures}
 \usage{
-param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
+param_tuning_sigmau(
+  Wp,
+  data,
+  prctile_vec,
+  lam_vec,
+  method = "Sample",
+  ncores = NULL,
+  use_parallel = TRUE
+)
 }
 \arguments{
 \item{Wp}{A symmetric matrix representing pairwise potentials (weights).}
@@ -14,6 +22,12 @@ param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
 \item{prctile_vec}{A vector of percentiles for the pairwise potentials to consider.}
 
 \item{lam_vec}{A vector of lambda values to test.}
+
+\item{method}{A string indicating the method to use for SigmaU calculation (default is "Sample").}
+
+\item{ncores}{The number of cores to use for parallel processing (default is NULL, which uses all available cores - 1).}
+
+\item{use_parallel}{A logical value indicating whether to use parallel processing. Defaults to TRUE.}
 }
 \value{
 A list containing the optimal lambda value (\code{lambda_out}) and the corresponding cut-off value (\code{cut_out}).
@@ -22,13 +36,4 @@ A list containing the optimal lambda value (\code{lambda_out}) and the correspon
 This function tunes parameters to identify optimal subnetwork structures
 by minimizing the Frobenius norm of the residual covariance matrix.
 It uses a grid search over different combinations of lambda and cut-off values.
-}
-\examples{
-data <- matrix(runif(200), nrow = 20)
-Wp <- cor(data)
-prctile_vec <- c(0.1, 0.5, 0.8)
-lam_vec <- c(0.1, 0.5, 1.0)
-result <- param_tuning_sigmau(Wp, data, prctile_vec, lam_vec)
-print(result)
-
 }
