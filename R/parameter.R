@@ -26,87 +26,72 @@ param_tuning_sigmau <- function(Wp, data, prctile_vec, lam_vec, method = "Sample
 
   nodeLen <- nrow(Wp)
   edgeLen <- length(nlogp)
-  sigmau_vec <- matrix(0, nrow = length(lam_vec), ncol = length(gr))
 
-  # Set up parallel processing (if ncores is provided)
-  if (is.null(ncores)) {
-    ncores <- detectCores() - 1  # Use one less than the total number of cores
-  }
+  # Flatten the combinations of lambda and r
+  param_combinations <- expand.grid(lambda = lam_vec, r = gr)
 
   # Define the function for parameter tuning for a given combination of lambda and cut-off
   tune_param_set <- function(lambda, r) {
-    # Perform greedy clustering with the current cut-off and lambda
     result <- dense(Wp, r, lambda)
-    Clist_temp <- result$Clist
-    CID_temp <- result$CID
-
-    # Calculate SigmaU for the current clustering
-    sigmau_result <- scfa(data, CID_temp, Clist_temp, method = method)
+    sigmau_result <- scfa(data, result$CID, result$Clist, method = method)
     sigmau_norm <- sigmau_result$sigma_u_norm
     sigmau_norm_d <- sigmau_result$sigma_u_diag_norm
-    # Store the SigmaU value with a penalty for the number of clusters
-    return(sigmau_norm + sigmau_norm_d)
+    return(list(lambda = lambda, r = r, result = sigmau_norm + sigmau_norm_d))
   }
 
   # Check if parallel processing is enabled
   if (use_parallel) {
+    # Set up parallel processing (if ncores is provided)
+    if (is.null(ncores)) {
+      ncores <- detectCores() - 1  # Use one less than the total number of cores
+    }
     # Check the operating system and set up parallel computing
     if (.Platform$OS.type == "windows") {
       # Windows system: use makeCluster
       cl <- makeCluster(ncores)
-
-      # Export necessary variables to the cluster (if needed)
       clusterExport(cl, list("Wp", "data", "gr", "lam_vec", "dense", "scfa", "method", "tune_param_set"))
 
-      # Parallel processing using parLapply
-      results <- parLapply(cl, seq_along(lam_vec), function(i) {
-        lambda <- lam_vec[i]
-        sapply(gr, function(r) tune_param_set(lambda, r))
+      # Apply the function in parallel
+      results <- parLapply(cl, seq_len(nrow(param_combinations)), function(idx) {
+        lambda <- param_combinations$lambda[idx]
+        r <- param_combinations$r[idx]
+        result <- tune_param_set(lambda, r)
+        return(result)
       })
 
-      # Stop the cluster after parallel computation
+      # Stop the cluster
       stopCluster(cl)
-    } else {
-      # macOS/Linux system: use mclapply (supports multicore)
-      results <- mclapply(seq_along(lam_vec), function(i) {
-        lambda <- lam_vec[i]
-        sapply(gr, function(r) tune_param_set(lambda, r))
-      }, mc.cores = ncores)
-    }
 
-    # Convert the list of results into a matrix
-    sigmau_vec <- do.call(rbind, results)
+      } else {
+      # macOS/Linux system: use mclapply (supports multicore)
+        results <- mclapply(seq_len(nrow(param_combinations)), function(idx) {
+          lambda <- param_combinations$lambda[idx]
+          r <- param_combinations$r[idx]
+          result <- tune_param_set(lambda, r)
+          return(result)
+        }, mc.cores = ncores)
+      }
   } else {
     # Run the tuning process without parallel processing (sequential mode)
-    for (i in seq_along(lam_vec)) {
-      lambda <- lam_vec[i]
-      for (j in seq_along(gr)) {
-        r <- gr[j]
-
-        # Perform greedy clustering with the current cut-off and lambda
-        result <- dense(Wp, r, lambda)
-        Clist_temp <- result$Clist
-        CID_temp <- result$CID
-
-        # Calculate SigmaU for the current clustering
-        sigmau_result <- scfa(data, CID_temp, Clist_temp, method = method)
-        sigmau_norm <- sigmau_result$sigma_u_norm
-        sigmau_norm_d <- sigmau_result$sigma_u_diag_norm
-        # Store the SigmaU value with a penalty for the number of clusters
-        sigmau_vec[i, j] <- sigmau_norm + sigmau_norm_d
-      }
-    }
+    results <- lapply(seq_len(nrow(param_combinations)), function(idx) {
+      lambda <- param_combinations$lambda[idx]
+      r <- param_combinations$r[idx]
+      result <- tune_param_set(lambda, r)
+      return(result)
+    })
   }
 
-  # Choose the optimal lambda and cut-off
-  min_index <- which.min(sigmau_vec)
+  # flatten the list into a data frame
+  all_results_df <- do.call(rbind, lapply(results, function(res) {
+    data.frame(lambda = res$lambda, r = res$r, result = res$result)
+  }))
+  row.names(all_results_df) <- NULL
+  colnames(all_results_df) <- c("Lambda", "CutOff", "SigmaU")
 
-  # Convert linear index to row and column indices
-  row_idx <- ((min_index - 1) %% nrow(sigmau_vec)) + 1
-  col_idx <- ((min_index - 1) %/% nrow(sigmau_vec)) + 1
+  # optimal parameters
+  min_index <- which.min(all_results_df$SigmaU)
+  optimal_lambda <- all_results_df$Lambda[min_index]
+  optimal_r <- all_results_df$CutOff[min_index]
 
-  cut_out <- gr[col_idx]
-  lambda_out <- lam_vec[row_idx]
-
-  return(list(lambda_out = lambda_out, cut_out = cut_out))
+  return(list(lambda_out = optimal_lambda, cut_out = optimal_r, all = all_results_df))
 }

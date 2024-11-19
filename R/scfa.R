@@ -59,20 +59,30 @@ scfa <- function(data, CID, Clist, method = "Sample") {
     SIGMA_U <- diag(diag(cov(t(XT_cent)) - L_SIGMAF_LT))
   }
 
-  F_HAT_FINAL <- solve(LT %*% solve(SIGMA_U) %*% L) %*% LT %*% solve(SIGMA_U) %*% XT_cent
+  epsilon <- 1e-6 #a small regularization value
+
+  INV_SIGMA_U <- tryCatch({
+    solve(SIGMA_U)
+  }, error = function(e) {
+    # If singular, add a small diagonal regularization to SIGMA_U
+    SIGMA_U_reg <- SIGMA_U + diag(epsilon, nrow(SIGMA_U))
+    solve(SIGMA_U_reg)
+  })
+
+  F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT_cent
 
   ################ GET SIGMAU #################
   SIGMA_X0 <- cov(t(XT0_cent))
   SIGMA_F <- cov(t(F_HAT_FINAL))
-  L_SIGMAF_LT_full <- matrix(0, p0, p0)
-  L_SIGMAF_LT_full[1:p, 1:p] <- L %*% SIGMA_F %*% t(L)
-
-  SIGMA_U_OFF <- SIGMA_X0 - L_SIGMAF_LT_full
-  diag(SIGMA_U_OFF) <- 0
+  LT_FULL <- matrix(0, k, p0)
+  LT_FULL[, 1:p] <- t(L)
+  U <- X0 - t(F_HAT_FINAL) %*% LT_FULL
+  SIGMA_U_OFF <- cov(U)
   SIGMA_UF_OFF <- norm(SIGMA_U_OFF, type = "F")
 
   ################ GET SIGMAU 0 (DIAGNAL) #################
   SIGMA_F0 <- if (k > 1) diag(diag(SIGMA_F)) else SIGMA_F
+  L_SIGMAF_LT_full <- matrix(0, p0, p0)
   L_SIGMAF_LT_full[1:p, 1:p] <- L %*% SIGMA_F0 %*% t(L)
 
   SIGMA_U_DIAG <- SIGMA_X0 - L_SIGMAF_LT_full
