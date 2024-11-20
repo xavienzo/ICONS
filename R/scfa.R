@@ -89,7 +89,7 @@ scfa <- function(data,
   diag(SIGMA_U_DIAG) <- 0
   SIGMA_UF_DIAG <- norm(SIGMA_U_DIAG, type = "F")
 
-  åreturn(list(loading = L,
+  return(list(loading = L,
               factorscore = F_HAT,
               sigma_u = SIGMA_U_OFF,
               sigma_u_norm = SIGMA_UF_OFF,

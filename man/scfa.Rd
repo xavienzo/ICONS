@@ -4,16 +4,18 @@
 \alias{scfa}
 \title{Semi-Confirmatory Factor Analysis}
 \usage{
-scfa(data, CID, Clist, method = "Sample")
+scfa(data, CID, Clist, method = "Sample", epsilon = 1e-06)
 }
 \arguments{
-\item{data}{A data frame or matrix where rows represent observations and columns represent variables.}
+\item{data}{A scaled data frame or matrix where rows represent observations and columns represent variables.}
 
 \item{CID}{A numeric vector indicating the number of variables associated with each factor.}
 
 \item{Clist}{A numeric vector indicating the column indices of the variables to be used in the analysis.}
 
 \item{method}{Character. Method of residual term estimation: "Sample" or "MLE".}
+
+\item{epsilon}{A small regularization value for solving the inverse of Sigma_U}
 }
 \value{
 A list containing:
