@@ -1,5 +1,5 @@
 # ICONS: Integrative analysis of COvariance matrix and Network Structure
-
+## ICONS 0.1.3
 ## Installation
 You can install the development version `ICONS` package directly from GitHub using the `devtools` package:
 
@@ -38,7 +38,8 @@ prctile_vec <- seq(94, 99, by = 0.5)
 lam_vec <- seq(0.4, 0.8, length.out = 5)
 
 # grid search
-param <- param_tuning_sigmau(matrix, sim, prctile_vec, lam_vec)
+# Paralell computing default to TRUE
+param <- param_tuning_sigmau(matrix, sim, prctile_vec, lam_vec, use_parallel = T)
 
 # use optimal parameters to extract subnetworks
 results <- dense(W_original = matrix, threshold = param$cut_out, lambda = param$lambda_out)
@@ -84,11 +85,26 @@ plotMatrix(results$W_dense,
 ### SCFA (Semi-confirmatory factor analysis)
 ```r
 # perform SCFA
+# method default to "Sample", alternative is "MLE"
 fa <- scfa(sim, results$CID, results$Clist)
+fa_mle <- scfa(sim, results$CID, results$Clist, method = "MLE")
+
 # factor loadings
 fa$loading
 # factor scores
 fa$factorscore
+
+# Covariance matrix of the factor scores
+plotMatrix(cov(t(fa$factorscore)))
+plotMatrix(cov(t(fa_mle$factorscore)))
+
+# Residual matrix after factor estimation
+plotMatrix(fa$sigma_u)
+plotMatrix(fa_mle$sigma_u)
+
+# Elbow method to choose k
+k_sigmau <- k.elbow(sim, results$CID, results$Clist)
+plot(k_sigmau)
 ```
 
 ## License
