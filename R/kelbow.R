@@ -20,22 +20,21 @@ k.elbow <- function(data,
                     Clist,
                     k = length(CID),
                     method = "Sample",
-                    epsilon = 1e-6) {
-
-  # Validate and initialize parameters
+                    epsilon = 1e-6){
   k <- min(k, length(CID)) # Ensure k is within the length of CID
   covmat <- cov(data)
   diag(covmat) <- 0
-  fullgraph_norm <- 2 * norm(covmat, type = "F")
-  sigmau_k_f_vector <- numeric(k + 1)
-  sigmau_k_f_vector[1] <- fullgraph_norm
+  fullgraph <- 2 * norm(covmat, type = "F")
+  sigmau_k_f_vector <- c(fullgraph)
 
-  # Compute residual norms for increasing numbers of factors
-  for (kk in 1:k) {
+  blocks <- if (k == length(CID)) k-1 else k
+
+  for (kk in 1:blocks){
     clist_in <- Clist[1:sum(CID[1:kk])]
-    CID_temp <- c(CID[1:kk], ncol(data) - length(clist_in))
-    sigmau <- scfa(data, CID_temp, clist_in, method, epsilon)
-    sigmau_k_f_vector[kk + 1] <- sigmau$sigma_u_norm + sigmau$sigma_u_diag_norm
+    CID_temp <- c(CID[1:kk], ncol(data)-length(clist_in))
+    sigmau <- scfa(data, CID_temp, Clist, method, epsilon)
+    sigmau_k_f <- sigmau$sigma_u_norm + sigmau$sigma_u_diag_norm
+    sigmau_k_f_vector <- c(sigmau_k_f_vector, sigmau_k_f)
   }
 
   return(sigmau_k_f_vector)
