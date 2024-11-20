@@ -1,9 +1,13 @@
-# ICONS 0.1.2
+# ICONS 0.1.3
 
-# ICONS
+# ICONS 0.1.3
+* Now requires SCALED data input.
+* Added `k.elbow.R`.
+* Added epsilon argument (to fix unsolvable matrix issue) and  more useful return values in the scfa function for flexibility.
+* The parameter tuning function now returns the sigmau results for all prespecified parameter combinations.
 
 # ICONS 0.1.2
-* Introduced option of parallel computing in parameter tuning
+* Introduced the option of parallel computing in parameter tuning🎉
 * Added option of moment estimator vs. MLE estimator of sigma_u in SCFA
 * Removed `entropy.R` and merged SCFA with sigma_u estimation functions
 
