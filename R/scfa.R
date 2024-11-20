@@ -2,11 +2,11 @@
 #'
 #' This function performs a semi-confirmatory factor analysis (SCFA) on the provided dataset.
 #'
-#' @param data A data frame or matrix where rows represent observations and columns represent variables.
+#' @param data A scaled data frame or matrix where rows represent observations and columns represent variables.
 #' @param CID A numeric vector indicating the number of variables associated with each factor.
 #' @param Clist A numeric vector indicating the column indices of the variables to be used in the analysis.
 #' @param method Character. Method of residual term estimation: "Sample" or "MLE".
-#'
+#' @param epsilon A small regularization value for solving the inverse of Sigma_U
 #' @return A list containing:
 #' \describe{
 #'   \item{loading}{A matrix of factor loadings.}
@@ -24,15 +24,18 @@
 #' @export
 #' @importFrom stats cov
 
-scfa <- function(data, CID, Clist, method = "Sample") {
+scfa <- function(data,
+                 CID,
+                 Clist,
+                 method = "Sample",
+                 epsilon = 1e-6) {
 
   method <- match.arg(method, choices = c("Sample", "MLE"))
 
   # parameters
-  k0 <- length(CID)
-  k <- k0 - 1
+  k <- length(CID) - 1
   n <- nrow(data)
-  CID_temp <- CID[-k0]
+  CID_temp <- CID[-length(CID)]
   p <- sum(CID_temp)
   p0 <- ncol(data)
 
@@ -44,22 +47,19 @@ scfa <- function(data, CID, Clist, method = "Sample") {
 
   # Data centering for selected columns
   X0 <- data[, Clist, drop = FALSE]
-  XT0_cent <- t(sweep(X0, 2, colMeans(X0)))
-  XT_cent <- XT0_cent[1:p, , drop = FALSE]
+  XT <- t(X0)[1:p, , drop = FALSE]
 
-  F_HAT <- solve(LT %*% L) %*% (LT %*% XT_cent)
-
+  # F_HAT <- solve(LT %*% L) %*% LT %*% XT_cent
+  F_HAT <- solve(LT %*% L) %*% (LT %*% XT)
   SIGMA_F <- cov(t(F_HAT))
   L_SIGMAF_LT <- L %*% SIGMA_F %*% LT
 
   if (method == "Sample") {
-    U <- t(XT_cent) - t(F_HAT) %*% LT
+    U <- t(XT) - t(F_HAT) %*% LT
     SIGMA_U <- diag(diag(cov(U)))
   } else {
-    SIGMA_U <- diag(diag(cov(t(XT_cent)) - L_SIGMAF_LT))
+    SIGMA_U <- diag(diag(cov(t(XT)) - L_SIGMAF_LT))
   }
-
-  epsilon <- 1e-6 #a small regularization value
 
   INV_SIGMA_U <- tryCatch({
     solve(SIGMA_U)
@@ -69,15 +69,15 @@ scfa <- function(data, CID, Clist, method = "Sample") {
     solve(SIGMA_U_reg)
   })
 
-  F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT_cent
+  F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
 
   ################ GET SIGMAU #################
-  SIGMA_X0 <- cov(t(XT0_cent))
   SIGMA_F <- cov(t(F_HAT_FINAL))
   LT_FULL <- matrix(0, k, p0)
   LT_FULL[, 1:p] <- t(L)
   U <- X0 - t(F_HAT_FINAL) %*% LT_FULL
   SIGMA_U_OFF <- cov(U)
+  diag(SIGMA_U_OFF) <- 0
   SIGMA_UF_OFF <- norm(SIGMA_U_OFF, type = "F")
 
   ################ GET SIGMAU 0 (DIAGNAL) #################
@@ -85,11 +85,11 @@ scfa <- function(data, CID, Clist, method = "Sample") {
   L_SIGMAF_LT_full <- matrix(0, p0, p0)
   L_SIGMAF_LT_full[1:p, 1:p] <- L %*% SIGMA_F0 %*% t(L)
 
-  SIGMA_U_DIAG <- SIGMA_X0 - L_SIGMAF_LT_full
+  SIGMA_U_DIAG <- cov(X0) - L_SIGMAF_LT_full
   diag(SIGMA_U_DIAG) <- 0
   SIGMA_UF_DIAG <- norm(SIGMA_U_DIAG, type = "F")
 
-  return(list(loading = L,
+  åreturn(list(loading = L,
               factorscore = F_HAT,
               sigma_u = SIGMA_U_OFF,
               sigma_u_norm = SIGMA_UF_OFF,
