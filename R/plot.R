@@ -62,7 +62,7 @@ plotMatrix <- function(z,
 
 
   # Main plot
-  layout(matrix(c(1, 2), nrow = 1), widths = c(7, 1))
+  layout(matrix(c(1, 2), nrow = 1), widths = c(5.5, 1))
   par(mar = c(5, 4, 4, 1), ...)
 
   image(x = x,
@@ -95,7 +95,7 @@ plotMatrix <- function(z,
   box()
 
   # Add the legend
-  par(mar = c(5, 0, 4, 4))
+  par(mar = c(5, 0, 4, 5))
   plot(x = rep(1,length(color_legend$value)),
        y = color_legend$value,
        xlim = c(0,1),
