@@ -8,7 +8,7 @@
 #' @param width Integer. Width of the saved image, in pixels. Default is 2500.
 #' @param height Integer. Height of the saved image, in pixels. Default is 2350.
 #' @param res Integer. Resolution of the saved image, in ppi. Default is 300.
-#' @param format Character. Format of the saved image. Options are `"tiff"`, `"png"`, `"jpeg"`, or `"svg"`. Default is `"tiff"`.
+#' @param format Character. Format of the saved image. Options are `"tiff"`, `"png"`, `"jpeg"`, `eps`, or `"svg"`. Default is `"tiff"`.
 #' @param ... Additional graphical parameters to pass to the `image` function, such as axis properties.
 #' @details
 #' This function plots a heatmap of a matrix with a color palette similar to the jet color map in MATLAB.
@@ -49,7 +49,8 @@ plotMatrix <- function(z,
            "tiff" = tiff(filename = filepath, width = width, height = height, res = res, compression = "lzw"),
            "png" = png(filename = filepath, width = width, height = height, res = res),
            "jpeg" = jpeg(filename = filepath, width = width, height = height, res = res),
-           "svg" = svg(filename = filepath, width = width, height = height),
+           "svg" = svg(filename = filepath, width = width/250, height = height/250),
+           "eps" = postscript(file = filepath, width = width/250, height = height/250, paper = "special"),
            stop("Unsupported file format. Use 'tiff', 'png', 'jpeg', or 'svg'.")
     )
   }
@@ -61,9 +62,9 @@ plotMatrix <- function(z,
 
 
   # Main plot
+  layout(matrix(c(1, 2), nrow = 1), widths = c(7, 1))
+  par(mar = c(5, 4, 4, 1), ...)
 
-  layout(matrix(c(1, 2), nrow = 1), widths = c(8, 1))
-  par(mar = c(5, 4, 4, 1) + 0.1, ...)
   image(x = x,
         y = y,
         z = t(z[nrow(z):1, ]),
@@ -94,8 +95,7 @@ plotMatrix <- function(z,
   box()
 
   # Add the legend
-  par(mar = c(5, 0, 4, 3))
-
+  par(mar = c(5, 0, 4, 4))
   plot(x = rep(1,length(color_legend$value)),
        y = color_legend$value,
        xlim = c(0,1),
