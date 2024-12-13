@@ -50,7 +50,7 @@ plotMatrix <- function(z,
            "png" = png(filename = filepath, width = width, height = height, res = res),
            "jpeg" = jpeg(filename = filepath, width = width, height = height, res = res),
            "svg" = svg(filename = filepath, width = width/250, height = height/250),
-           "eps" = postscript(file = filepath, width = width/250, height = height/250, paper = "special"),
+           "eps" = postscript(file = filepath, width = width/250, height = height/250, paper = "special", horizontal = FALSE),
            stop("Unsupported file format. Use 'tiff', 'png', 'jpeg', or 'svg'.")
     )
   }
