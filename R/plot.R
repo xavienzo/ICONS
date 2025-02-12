@@ -8,7 +8,7 @@
 #' @param width Integer. Width of the saved image, in pixels. Default is 2500.
 #' @param height Integer. Height of the saved image, in pixels. Default is 2350.
 #' @param res Integer. Resolution of the saved image, in ppi. Default is 300.
-#' @param format Character. Format of the saved image. Options are `"tiff"`, `"png"`, `"jpeg"`, `eps`, or `"svg"`. Default is `"tiff"`.
+#' @param format Character. Format of the saved image. Options are `"tiff"`, `"png"`, `"jpeg"`, `"pdf"`, `"eps"`, or `"svg"`. Default is `"tiff"`.
 #' @param ... Additional graphical parameters to pass to the `image` function, such as axis properties.
 #' @details
 #' This function plots a heatmap of a matrix with a color palette similar to the jet color map in MATLAB.
@@ -51,7 +51,8 @@ plotMatrix <- function(z,
            "jpeg" = jpeg(filename = filepath, width = width, height = height, res = res),
            "svg" = svg(filename = filepath, width = width/250, height = height/250),
            "eps" = postscript(file = filepath, width = width/250, height = height/250, paper = "special", horizontal = FALSE),
-           stop("Unsupported file format. Use 'tiff', 'png', 'jpeg', or 'svg'.")
+           "pdf" = pdf(file = filepath, width = width / 250, height = height / 250),
+           stop("Unsupported file format. Use 'tiff', 'png', 'jpeg', 'svg', 'eps', or 'pdf'.")
     )
   }
 
