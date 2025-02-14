@@ -6,7 +6,8 @@
 #' @param CID A numeric vector indicating the number of variables associated with each factor.
 #' @param Clist A numeric vector indicating the column indices of the variables to be used in the analysis.
 #' @param method Character. Method of residual term estimation: "Sample" or "MLE".
-#' @param epsilon A small regularization value for solving the inverse of Sigma_U
+#' @param epsilon A small regularization value for solving the inverse of Sigma_U.
+#' @param remove.singletons Logical. Remove the singleton set for SCFA or not.
 #' @return A list containing:
 #' \describe{
 #'   \item{loading}{A matrix of factor loadings.}
@@ -28,14 +29,22 @@ scfa <- function(data,
                  CID,
                  Clist,
                  method = "Sample",
-                 epsilon = 1e-6) {
+                 epsilon = 1e-6,
+                 remove.singletons = TRUE) {
 
   method <- match.arg(method, choices = c("Sample", "MLE"))
 
   # parameters
-  k <- length(CID) - 1
+  if (remove.singletons == T) {
+    k <- length(CID) - 1
+    CID_temp <- CID
+  } else {
+      k <- length(CID)
+      CID_temp <- CID[-length(CID)]
+      }
+  # k <- length(CID) - 1
   n <- nrow(data)
-  CID_temp <- CID[-length(CID)]
+  # CID_temp <- CID[-length(CID)]
   p <- sum(CID_temp)
   p0 <- ncol(data)
 
