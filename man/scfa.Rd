@@ -4,7 +4,14 @@
 \alias{scfa}
 \title{Semi-Confirmatory Factor Analysis}
 \usage{
-scfa(data, CID, Clist, method = "Sample", epsilon = 1e-06)
+scfa(
+  data,
+  CID,
+  Clist,
+  method = "Sample",
+  epsilon = 1e-06,
+  remove.singletons = TRUE
+)
 }
 \arguments{
 \item{data}{A scaled data frame or matrix where rows represent observations and columns represent variables.}
@@ -15,7 +22,9 @@ scfa(data, CID, Clist, method = "Sample", epsilon = 1e-06)
 
 \item{method}{Character. Method of residual term estimation: "Sample" or "MLE".}
 
-\item{epsilon}{A small regularization value for solving the inverse of Sigma_U}
+\item{epsilon}{A small regularization value for solving the inverse of Sigma_U.}
+
+\item{remove.singletons}{Logical. Remove the singleton set for SCFA or not.}
 }
 \value{
 A list containing:

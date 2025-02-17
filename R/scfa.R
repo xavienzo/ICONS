@@ -37,10 +37,10 @@ scfa <- function(data,
   # parameters
   if (remove.singletons == T) {
     k <- length(CID) - 1
-    CID_temp <- CID
+    CID_temp <- CID[-length(CID)]
   } else {
       k <- length(CID)
-      CID_temp <- CID[-length(CID)]
+      CID_temp <- CID
       }
   # k <- length(CID) - 1
   n <- nrow(data)

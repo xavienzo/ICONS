@@ -7,11 +7,12 @@
 plotMatrix(
   z,
   filepath = file.path(getwd(), "plot.tiff"),
-  save.image = F,
+  save.image = FALSE,
   width = 2500,
   height = 2350,
   res = 300,
   format = "tiff",
+  colorbar.range = NULL,
   ...
 )
 }
@@ -22,13 +23,15 @@ plotMatrix(
 
 \item{save.image}{Logical. If \code{TRUE}, saves the plot to a file specified by \code{filepath}. Default is \code{FALSE}.}
 
-\item{width}{Integer. Width of the saved image, in pixels. Default is 2500.}
+\item{width}{Integer. Width of the saved image, in pixels (for raster formats) or inches (for vector formats). Default is 2500.}
 
-\item{height}{Integer. Height of the saved image, in pixels. Default is 2350.}
+\item{height}{Integer. Height of the saved image, in pixels (for raster formats) or inches (for vector formats). Default is 2350.}
 
-\item{res}{Integer. Resolution of the saved image, in ppi. Default is 300.}
+\item{res}{Integer. Resolution of the saved image, in ppi (for raster formats only). Default is 300.}
 
-\item{format}{Character. Format of the saved image. Options are \code{"tiff"}, \code{"png"}, \code{"jpeg"}, or \code{"svg"}. Default is \code{"tiff"}.}
+\item{format}{Character. Format of the saved image. Options are \code{"tiff"}, \code{"png"}, \code{"jpeg"}, \code{"pdf"}, \code{"eps"}, or \code{"svg"}. Default is \code{"tiff"}.}
+
+\item{colorbar.range}{Numeric vector of length 2. Specifies the minimum and maximum values for the color bar range. If \code{NULL} (default), the range is automatically determined from the input matrix \code{z}.}
 
 \item{...}{Additional graphical parameters to pass to the \code{image} function, such as axis properties.}
 }
@@ -41,6 +44,7 @@ Creates a heatmap visualization of a numeric matrix with a jet-like color palett
 \details{
 This function plots a heatmap of a matrix with a color palette similar to the jet color map in MATLAB.
 If \code{save.image} is \code{TRUE}, the plot is saved in the format and location specified by \code{filepath} and \code{format}.
+The \code{colorbar.range} parameter allows users to manually set the range of the color bar, which is useful for ensuring consistent scaling across multiple plots.
 }
 \examples{
 mat <- matrix(rnorm(100), nrow = 10)
