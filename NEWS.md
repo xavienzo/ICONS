@@ -1,6 +1,7 @@
 # ICONS 0.1.4
-
-# ICONS 0.1.3
+* `plotMatrix` now supports `format = "pdf"` export.
+* `plotMatrix` now supports manual colorbar settings through `colorbar.range = NULL`.
+* Added `remove.singletons = TRUE` argument in `scfa`.
 
 # ICONS 0.1.3
 * Now requires SCALED data input.
