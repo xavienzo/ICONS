@@ -1,4 +1,4 @@
-# ICONS (development version)
+# ICONS 0.1.4
 
 # ICONS 0.1.3
 
