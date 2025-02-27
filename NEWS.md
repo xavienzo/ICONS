@@ -1,3 +1,5 @@
+# ICONS 0.1.5
+
 # ICONS 0.1.4
 * `plotMatrix` now supports `format = "pdf"` export.
 * `plotMatrix` now supports manual colorbar settings through `colorbar.range = NULL`.
