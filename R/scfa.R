@@ -99,7 +99,7 @@ scfa <- function(data,
   SIGMA_UF_DIAG <- norm(SIGMA_U_DIAG, type = "F")
 
   return(list(loading = L,
-              factorscore = F_HAT,
+              factorscore = F_HAT_FINAL,
               sigma_u = SIGMA_U_OFF,
               sigma_u_norm = SIGMA_UF_OFF,
               sigma_u_diag = SIGMA_U_DIAG,
