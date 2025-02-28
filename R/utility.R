@@ -108,10 +108,10 @@ get_index <- function(blockid, CID, Clist){
 #' @examples
 #' CID <- c(2, 3, 2)  # Community sizes: 2 variables in community 1, 3 in community 2, 2 in community 3
 #' Clist <- c(1, 4, 2, 5, 7, 3, 6)  # Variables ordered by community
-#' membership <- get_community_membership(CID, Clist)
+#' membership <- get_membership(CID, Clist)
 #' @export
 
-membership <- function(CID, Clist) {
+get_membership <- function(CID, Clist) {
 
   membership <- numeric(length(Clist))
 
