@@ -2,10 +2,10 @@
 
 export(dense)
 export(get_index)
+export(get_membership)
 export(get_vectorform)
 export(greedy_peeling)
 export(k.elbow)
-export(membership)
 export(param_tuning_sigmau)
 export(plotMatrix)
 export(scfa)

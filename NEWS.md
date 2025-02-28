@@ -1,4 +1,5 @@
 # ICONS 0.1.6
+* Added `get_membership` utility function.
 
 # ICONS 0.1.5
 * Fixed the factor score bug: F_HAT to F_HAT_FINAL.
