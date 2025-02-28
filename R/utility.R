@@ -78,3 +78,64 @@ get_index <- function(blockid, CID, Clist){
 
   return(list(indices = final_indices, block_ids = final_block_ids))
 }
+
+
+#' Convert Community Structure to Membership Vector
+#'
+#' @description
+#' Converts a community structure represented by community sizes and ordered variable indices
+#' into a standard membership vector where each element represents the community assignment
+#' for the corresponding variable.
+#'
+#' @param CID A numeric vector containing the number of variables in each community.
+#' Each element represents a community, and the value indicates how many variables belong to that community.
+#'
+#' @param Clist A numeric vector containing the indices of variables reordered by community membership.
+#' This vector should contain the original variable indices, arranged sequentially by community.
+#'
+#' @return A numeric vector of length equal to \code{Clist}, where each element corresponds to
+#' the community membership (1, 2, 3, etc.) of the variable at that index.
+#'
+#' @details
+#' This function takes two vectors that represent a community structure:
+#' \itemize{
+#'   \item \code{CID} contains the sizes of each community
+#'   \item \code{Clist} contains the original variable indices, ordered by community
+#' }
+#' The function returns a membership vector that maps each variable to its assigned community,
+#' which is a common format required by many community analysis functions.
+#'
+#' @examples
+#' CID <- c(2, 3, 2)  # Community sizes: 2 variables in community 1, 3 in community 2, 2 in community 3
+#' Clist <- c(1, 4, 2, 5, 7, 3, 6)  # Variables ordered by community
+#' membership <- get_community_membership(CID, Clist)
+#' @export
+
+membership <- function(CID, Clist) {
+
+  membership <- numeric(length(Clist))
+
+  # Track current position in Clist
+  start_idx <- 1
+  for (comm_idx in 1:length(CID)) {
+    # Number of variables in current community
+    comm_size <- CID[comm_idx]
+
+    # End index for this community in Clist
+    end_idx <- start_idx + comm_size - 1
+
+    # For each variable in this community
+    for (i in start_idx:end_idx) {
+      # Get the original variable index
+      var_idx <- Clist[i]
+
+      # Assign community membership to this variable
+      membership[var_idx] <- comm_idx
+    }
+
+    # Move to next community's starting position
+    start_idx <- end_idx + 1
+  }
+
+  return(membership)
+}
