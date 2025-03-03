@@ -1,4 +1,5 @@
 # ICONS 0.1.7
+* Substitute the inversion of matrices in the factor score estimation process (the `scfa` function) with closed-form solutions.
 
 # ICONS 0.1.6
 * Added `get_membership` utility function.
