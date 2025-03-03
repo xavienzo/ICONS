@@ -1,3 +1,5 @@
+# ICONS 0.1.7
+
 # ICONS 0.1.6
 * Added `get_membership` utility function.
 
