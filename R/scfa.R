@@ -59,7 +59,8 @@ scfa <- function(data,
   XT <- t(X0)[1:p, , drop = FALSE]
 
   # F_HAT <- solve(LT %*% L) %*% LT %*% XT_cent
-  F_HAT <- solve(LT %*% L) %*% (LT %*% XT)
+  # F_HAT <- solve(LT %*% L) %*% (LT %*% XT)
+  F_HAT <- diag(1 / CID_temp) %*% (LT %*% XT)
   SIGMA_F <- cov(t(F_HAT))
   L_SIGMAF_LT <- L %*% SIGMA_F %*% LT
 
@@ -71,14 +72,19 @@ scfa <- function(data,
   }
 
   INV_SIGMA_U <- tryCatch({
-    solve(SIGMA_U)
+    # By definition, SIGMA_U is a diagonal matrix
+    # solve(SIGMA_U)
+    diag(1/diag(SIGMA_U))
   }, error = function(e) {
     # If singular, add a small diagonal regularization to SIGMA_U
     SIGMA_U_reg <- SIGMA_U + diag(epsilon, nrow(SIGMA_U))
-    solve(SIGMA_U_reg)
+    # Similarly, substitute SIGMA_U with SIGMA_U_reg
+    diag(1/diag(SIGMA_U_reg))
   })
 
-  F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
+  #F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
+  INV <- diag(1 / tapply(diag(INV_SIGMA_U), rep(seq_along(CID_temp), CID_temp), sum))
+  F_HAT_FINAL <- INV %*% LT %*% INV_SIGMA_U %*% XT
 
   ################ GET SIGMAU #################
   SIGMA_F <- cov(t(F_HAT_FINAL))
