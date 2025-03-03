@@ -26,11 +26,11 @@
 #' @importFrom stats cov
 
 scfa <- function(data,
-                 CID,
-                 Clist,
-                 method = "Sample",
-                 epsilon = 1e-6,
-                 remove.singletons = TRUE) {
+                  CID,
+                  Clist,
+                  method = "Sample",
+                  epsilon = 1e-6,
+                  remove.singletons = TRUE) {
 
   method <- match.arg(method, choices = c("Sample", "MLE"))
 
@@ -39,9 +39,9 @@ scfa <- function(data,
     k <- length(CID) - 1
     CID_temp <- CID[-length(CID)]
   } else {
-      k <- length(CID)
-      CID_temp <- CID
-      }
+    k <- length(CID)
+    CID_temp <- CID
+  }
   # k <- length(CID) - 1
   n <- nrow(data)
   # CID_temp <- CID[-length(CID)]
@@ -59,8 +59,14 @@ scfa <- function(data,
   XT <- t(X0)[1:p, , drop = FALSE]
 
   # F_HAT <- solve(LT %*% L) %*% LT %*% XT_cent
-  # F_HAT <- solve(LT %*% L) %*% (LT %*% XT)
-  F_HAT <- diag(1 / CID_temp) %*% (LT %*% XT)
+  F_HAT <- tryCatch(
+    {
+      diag(1 / CID_temp) %*% (LT %*% XT)  # First attempt
+    },
+    error = function(e) {
+      (1 / CID_temp) %*% (LT %*% XT)  # Alternative if error occurs
+    }
+  )
   SIGMA_F <- cov(t(F_HAT))
   L_SIGMAF_LT <- L %*% SIGMA_F %*% LT
 
@@ -72,8 +78,8 @@ scfa <- function(data,
   }
 
   INV_SIGMA_U <- tryCatch({
+    #solve(SIGMA_U)
     # By definition, SIGMA_U is a diagonal matrix
-    # solve(SIGMA_U)
     diag(1/diag(SIGMA_U))
   }, error = function(e) {
     # If singular, add a small diagonal regularization to SIGMA_U
@@ -83,8 +89,14 @@ scfa <- function(data,
   })
 
   #F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
-  INV <- diag(1 / tapply(diag(INV_SIGMA_U), rep(seq_along(CID_temp), CID_temp), sum))
-  F_HAT_FINAL <- INV %*% LT %*% INV_SIGMA_U %*% XT
+  F_HAT_FINAL <- tryCatch(
+    {
+      diag(1 / tapply(diag(INV_SIGMA_U), rep(seq_along(CID_temp), CID_temp), sum)) %*% LT %*% INV_SIGMA_U %*% XT  # First attempt
+    },
+    error = function(e) {
+      solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT  # Alternative if error occurs
+    }
+  )
 
   ################ GET SIGMAU #################
   SIGMA_F <- cov(t(F_HAT_FINAL))
