@@ -1,3 +1,5 @@
+# ICONS 0.1.8
+
 # ICONS 0.1.7
 * Substitute the inversion of matrices in the factor score estimation process (the `scfa` function) with closed-form solutions.
 
