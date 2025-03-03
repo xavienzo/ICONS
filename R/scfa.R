@@ -42,9 +42,7 @@ scfa <- function(data,
     k <- length(CID)
     CID_temp <- CID
   }
-  # k <- length(CID) - 1
   n <- nrow(data)
-  # CID_temp <- CID[-length(CID)]
   p <- sum(CID_temp)
   p0 <- ncol(data)
 
@@ -58,15 +56,12 @@ scfa <- function(data,
   X0 <- data[, Clist, drop = FALSE]
   XT <- t(X0)[1:p, , drop = FALSE]
 
-  # F_HAT <- solve(LT %*% L) %*% LT %*% XT_cent
-  F_HAT <- tryCatch(
-    {
-      diag(1 / CID_temp) %*% (LT %*% XT)  # First attempt
-    },
-    error = function(e) {
-      (1 / CID_temp) %*% (LT %*% XT)  # Alternative if error occurs
-    }
-  )
+  if (length(CID_temp) > 1) {
+    F_HAT <- diag(1 / CID_temp) %*% (LT %*% XT)
+  } else {
+    F_HAT <- (1 / CID_temp) * (LT %*% XT)  # Use `*` for scalar multiplication
+  }
+
   SIGMA_F <- cov(t(F_HAT))
   L_SIGMAF_LT <- L %*% SIGMA_F %*% LT
 
@@ -78,25 +73,17 @@ scfa <- function(data,
   }
 
   INV_SIGMA_U <- tryCatch({
-    #solve(SIGMA_U)
-    # By definition, SIGMA_U is a diagonal matrix
     diag(1/diag(SIGMA_U))
   }, error = function(e) {
-    # If singular, add a small diagonal regularization to SIGMA_U
     SIGMA_U_reg <- SIGMA_U + diag(epsilon, nrow(SIGMA_U))
-    # Similarly, substitute SIGMA_U with SIGMA_U_reg
     diag(1/diag(SIGMA_U_reg))
   })
 
-  #F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
-  F_HAT_FINAL <- tryCatch(
-    {
-      diag(1 / tapply(diag(INV_SIGMA_U), rep(seq_along(CID_temp), CID_temp), sum)) %*% LT %*% INV_SIGMA_U %*% XT  # First attempt
-    },
-    error = function(e) {
-      solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT  # Alternative if error occurs
-    }
-  )
+  if (length(CID_temp) > 1) {
+    F_HAT_FINAL <- diag(1 / tapply(diag(INV_SIGMA_U), rep(seq_along(CID_temp), CID_temp), sum)) %*% LT %*% INV_SIGMA_U %*% XT
+  } else {
+    F_HAT_FINAL <- solve(LT %*% INV_SIGMA_U %*% L) %*% LT %*% INV_SIGMA_U %*% XT
+  }
 
   ################ GET SIGMAU #################
   SIGMA_F <- cov(t(F_HAT_FINAL))
