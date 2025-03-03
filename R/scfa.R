@@ -59,7 +59,7 @@ scfa <- function(data,
   if (length(CID_temp) > 1) {
     F_HAT <- diag(1 / CID_temp) %*% (LT %*% XT)
   } else {
-    F_HAT <- (1 / CID_temp) * (LT %*% XT)  # Use `*` for scalar multiplication
+    F_HAT <- (1 / CID_temp) * (LT %*% XT)
   }
 
   SIGMA_F <- cov(t(F_HAT))
