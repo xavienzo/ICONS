@@ -1,3 +1,5 @@
+# ICONS 0.1.9
+
 # ICONS 0.1.8
 * Fixed the bug when there is only one community detected and the closed-form estimation runs into errors.
 
