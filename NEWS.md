@@ -1,4 +1,5 @@
 # ICONS 0.1.9
+* `plotMatrix` now supports rectangle matrices.
 
 # ICONS 0.1.8
 * Fixed the bug when there is only one community detected and the closed-form estimation runs into errors.
@@ -10,7 +11,7 @@
 * Added `get_membership` utility function.
 
 # ICONS 0.1.5
-* Fixed the factor score bug: F_HAT to F_HAT_FINAL.
+* Fixed the factor score bug: `F_HAT` to `F_HAT_FINAL`.
 
 # ICONS 0.1.4
 * `plotMatrix` now supports `format = "pdf"` export.
