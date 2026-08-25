@@ -2,45 +2,118 @@
 % Please edit documentation in R/scfa.R
 \name{scfa}
 \alias{scfa}
-\title{Semi-Confirmatory Factor Analysis}
+\title{Semi-confirmatory factor analysis}
 \usage{
 scfa(
   data,
-  CID,
-  Clist,
-  method = "Sample",
-  epsilon = 1e-06,
-  remove.singletons = TRUE
+  partition,
+  sigma_u = c("mle", "diagonal"),
+  center = TRUE,
+  criterion = c("frobenius", "legacy", "none")
 )
 }
 \arguments{
-\item{data}{A scaled data frame or matrix where rows represent observations and columns represent variables.}
+\item{data}{A numeric matrix or data frame, observations in rows, variables
+in columns.  Variables are used in their original order; \code{partition}
+supplies the community assignment.}
 
-\item{CID}{A numeric vector indicating the number of variables associated with each factor.}
+\item{partition}{An \code{"icons_partition"} from \code{\link[=icons_detect]{icons_detect()}}, or an integer
+membership vector of length \code{ncol(data)} using \code{0} or \code{NA} for
+unassigned variables.}
 
-\item{Clist}{A numeric vector indicating the column indices of the variables to be used in the analysis.}
+\item{sigma_u}{Error-variance model.  \code{"mle"} (default) is the closed-form
+UMVUE \eqn{\hat a_{kk}I_{p_k}}, constant within a community.  \code{"diagonal"}
+estimates an unconstrained variance per variable from the residuals; it is
+useful for checking the within-community homogeneity assumption, but it is
+not the UMVUE and it breaks the OLS/GLS equivalence for factor scores.}
 
-\item{method}{Character. Method of residual term estimation: "Sample" or "MLE".}
+\item{center}{Logical; centre the columns before fitting.  The model assumes
+a zero mean, so leave this \code{TRUE} unless the data are already centred.}
 
-\item{epsilon}{A small regularization value for solving the inverse of Sigma_U.}
-
-\item{remove.singletons}{Logical. Remove the singleton set for SCFA or not.}
+\item{criterion}{Fit criterion recorded with the model, see
+\code{\link[=scfa_criterion]{scfa_criterion()}}.  \code{"frobenius"} (default) is
+\eqn{\|S - \hat\Sigma\|_F}; \code{"legacy"} reproduces the two-term objective
+used by ICONS 0.1.x.  \code{"none"} skips it, which avoids the \eqn{O(n^2p)}
+Gram matrix.}
 }
 \value{
-A list containing:
+An object of class \code{"scfa"}:
 \describe{
-\item{loading}{A matrix of factor loadings.}
-\item{factorscore}{A matrix of estimated factor scores.}
-\item{sigma_u}{Matrix of off-diagonal residuals (Sample or MLE).}
-\item{sigma_u_norm}{Frobenius norm of sigma_u.}
-\item{sigma_u_diag}{Diagonalized residuals (Sample or MLE).}
-\item{sigma_u_diag_norm}{Frobenius norm of sigma_u_diag.}
-\item{n.network}{Integer. Number of factors.}
-\item{n.var}{Integer. Number of variables.}
-\item{n.obs}{Integer. Number of observations.}
-\item{method}{The chosen estimation method.}
+\item{\code{a}}{Error variances \eqn{\hat a_{kk}}, one per community.}
+\item{\code{Sigma_f}}{\eqn{K \times K} estimated factor covariance matrix
+\eqn{(\hat b_{kk'})}.}
+\item{\code{scores}}{\eqn{n \times K} matrix of estimated factor scores.}
+\item{\code{se}}{Exact standard errors of \code{a} and \code{Sigma_f}.}
+\item{\code{cov_scores}}{Exact covariance matrix of a factor score vector,
+\eqn{\mathrm{diag}(a_{kk}/p_k) + \Sigma_f}.}
+\item{\code{criterion}}{Value of the recorded fit criterion, and its
+relative version \eqn{\|S - \hat\Sigma\|_F / \|S\|_F}.}
+\item{\code{sizes}, \code{membership}, \code{K}, \code{n}, \code{p}, \code{n_singletons}}{Structure of
+the fit.}
 }
+Loadings are not stored: \eqn{\hat L} is fully determined by the
+membership, and \code{\link[=factor_loadings]{factor_loadings()}} builds it on demand.
 }
 \description{
-This function performs a semi-confirmatory factor analysis (SCFA) on the provided dataset.
+Fits the SCFA model of Yang, Ma, Bi and Chen (2024).  The communities in
+\code{partition} specify which loadings of \eqn{L} are non-zero, one common
+factor per community, so the "confirmatory" structure is learned from the
+data rather than assumed.  Every parameter then has a closed-form maximum
+likelihood estimator, so no iterative optimiser is involved.
+}
+\section{Model}{
+
+With variables ordered by community,
+\deqn{X = Lf + u, \qquad \Sigma = L\Sigma_f L^\top + \Sigma_u,}
+\eqn{L = \mathrm{Bdiag}(1_{p_1}, \ldots, 1_{p_K})},
+\eqn{\Sigma_f = (b_{kk'})} and
+\eqn{\Sigma_u = \mathrm{Bdiag}(a_{11}I_{p_1}, \ldots, a_{KK}I_{p_K})}.
+Writing \eqn{S_{kk'}} for the corresponding block of the sample covariance
+matrix, the maximum likelihood estimators are
+\deqn{\hat a_{kk} = \frac{p_k\,\mathrm{tr}(S_{kk}) - \mathrm{sum}(S_{kk})}{p_k(p_k-1)},
+      \qquad
+      \hat b_{kk} = \frac{\mathrm{sum}(S_{kk}) - \mathrm{tr}(S_{kk})}{p_k(p_k-1)},
+      \qquad
+      \hat b_{kk'} = \frac{\mathrm{sum}(S_{kk'})}{p_k p_{k'}} \ (k \neq k').}
+These are uniformly minimum-variance unbiased whenever
+\eqn{K + K(K+1)/2 < n}, and the factor scores
+\eqn{\hat f_i = (L^\top L)^{-1} L^\top X_i} --- simply the community means of
+the centred observations --- coincide with the GLS and feasible GLS
+estimators.
+}
+
+\section{Singletons}{
+
+Variables that \code{partition} did not assign to any community are carried
+through but not modelled: they load on no factor, and their variance enters
+the fit criterion as wholly unexplained covariance.  Communities must have
+at least two variables, since \eqn{\hat a_{kk}} divides by
+\eqn{p_k(p_k-1)}.
+}
+
+\examples{
+data(sim)
+part <- icons_detect(cor(sim), threshold = 0.6)
+fit <- scfa(sim, part)
+fit
+
+# Wald confidence intervals for the covariance parameters
+head(confint(fit))
+
+# Factor scores
+dim(fit$scores)
+
+}
+\references{
+Yang, Y., Ma, T., Bi, C., & Chen, S. (2024). Semi-confirmatory factor
+analysis for high-dimensional data with interconnected community structures.
+\emph{arXiv}. \doi{10.48550/arXiv.2401.00624}
+
+Yang, Y., Chen, C., & Chen, S. (2024). Covariance matrix estimation for
+high-throughput biomedical data with interconnected communities.
+\emph{The American Statistician}, 78(4), 401--411.
+\doi{10.1080/00031305.2024.2329681}
+}
+\seealso{
+\code{\link[=icons_detect]{icons_detect()}}, \code{\link[=n_factors]{n_factors()}}, \code{\link[=confint.scfa]{confint.scfa()}}, \code{\link[=factor_loadings]{factor_loadings()}}
 }

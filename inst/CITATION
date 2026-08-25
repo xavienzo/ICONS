@@ -1,0 +1,69 @@
+citHeader("To cite ICONS in publications, please cite the software and the method paper the component you used comes from.")
+
+bibentry(
+  bibtype  = "Manual",
+  title    = "{ICONS}: Integrative Analysis of Covariance Matrices and Network Structure",
+  author   = person("Yezhi", "Pan"),
+  year     = "2026",
+  note     = "R package version 0.2.0",
+  url      = "https://github.com/xavienzo/ICONS"
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = "Semi-confirmatory factor analysis for high-dimensional data with interconnected community structures",
+  author  = c(person("Yifan", "Yang"), person("Tianzhou", "Ma"),
+              person("Chuan", "Bi"), person("Shuo", "Chen")),
+  journal = "arXiv",
+  year    = "2024",
+  doi     = "10.48550/arXiv.2401.00624",
+  textVersion = paste(
+    "Yang, Y., Ma, T., Bi, C., & Chen, S. (2024).",
+    "Semi-confirmatory factor analysis for high-dimensional data with",
+    "interconnected community structures. arXiv:2401.00624."),
+  header = "For the SCFA model and its closed-form estimators (scfa):"
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = "Covariance Matrix Estimation for High-Throughput Biomedical Data with Interconnected Communities",
+  author  = c(person("Yifan", "Yang"), person("Chixiang", "Chen"),
+              person("Shuo", "Chen")),
+  journal = "The American Statistician",
+  volume  = "78",
+  number  = "4",
+  pages   = "401--411",
+  year    = "2024",
+  doi     = "10.1080/00031305.2024.2329681",
+  header  = "For the uniform-block covariance parameterisation:"
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = "Identifying covariate-related subnetworks for whole-brain connectome analysis",
+  author  = c(person("Shuo", "Chen"), person("Yuan", "Zhang"),
+              person("Qiong", "Wu"), person("Chuan", "Bi"),
+              person("Peter", "Kochunov"), person("L. Elliot", "Hong")),
+  journal = "Biostatistics",
+  volume  = "25",
+  number  = "2",
+  pages   = "541--558",
+  year    = "2024",
+  doi     = "10.1093/biostatistics/kxad007",
+  header  = "For the generalised peeling objective (icons_detect, greedy_peeling):"
+)
+
+bibentry(
+  bibtype = "Article",
+  title   = "Extracting brain disease-related connectome subgraphs by adaptive dense subgraph discovery",
+  author  = c(person("Qiong", "Wu"), person("Xiaoqi", "Huang"),
+              person("Adam J.", "Culbreth"), person("James A.", "Waltz"),
+              person("L. Elliot", "Hong"), person("Shuo", "Chen")),
+  journal = "Biometrics",
+  volume  = "78",
+  number  = "4",
+  pages   = "1566--1578",
+  year    = "2022",
+  doi     = "10.1111/biom.13537",
+  header  = "For adaptive dense subgraph discovery (icons_detect):"
+)

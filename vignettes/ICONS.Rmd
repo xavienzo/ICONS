@@ -1,0 +1,245 @@
+---
+title: "Getting started with ICONS"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with ICONS}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 3.4, dpi = 96)
+```
+
+```{r setup}
+library(ICONS)
+```
+
+## The problem
+
+Confirmatory factor analysis is attractive: a sparse loading matrix, one factor
+per group of variables, arbitrary covariance between factors. It has two
+practical problems. You need to know the grouping in advance, and standard
+implementations do not scale much past a few hundred variables.
+
+High-throughput biomedical data usually violates the first requirement and
+always violates the second. What it does offer is structure: covariance
+matrices from genomics, proteomics, metabolomics and neuroimaging tend to show
+*interconnected community structure* — groups of mutually correlated features,
+the groups themselves correlated, and a residue of features belonging to no
+group.
+
+ICONS turns that structure into the missing prior knowledge. Communities are
+detected from the covariance matrix, each becomes a factor, and the resulting
+model has closed-form estimators throughout.
+
+## A worked example
+
+```{r}
+data(sim)
+dim(sim)
+W <- cor(sim)
+```
+
+The structure is invisible in the variables' original order and obvious once
+they are reordered — which is the whole point of the detection step.
+
+```{r, fig.height = 3.4}
+plot_matrix(W, main = "Original order")
+```
+
+### Detecting communities
+
+`icons_detect()` repeatedly extracts the densest remaining subgraph. Each pass
+strips the lowest-degree node and scores the survivors by the generalised
+density $w(S)/|S|^{2\lambda}$; the best-scoring set becomes a community and the
+process restarts on what is left.
+
+```{r}
+part <- icons_detect(W, threshold = 0.6)
+part
+```
+
+Two settings govern this. `threshold` decides which edges are visible at all,
+and `lambda` trades size against density — larger values give smaller, denser
+communities. Variables never assigned anywhere become the **singleton set**,
+reported separately rather than being treated as a community.
+
+```{r}
+plot_matrix(reorder_matrix(W, part), partition = part, main = "Reordered")
+```
+
+If reasoning about a threshold on the correlation scale is awkward, give a
+quantile of the observed edge weights instead:
+
+```{r}
+icons_detect(W, probs = 0.95)$sizes
+```
+
+### Letting the data choose the settings
+
+```{r}
+tuned <- icons_tune(W, sim,
+                    probs  = seq(0.90, 0.98, by = 0.02),
+                    lambda = c(0.4, 0.6, 0.8))
+tuned
+```
+
+```{r, fig.height = 4}
+plot(tuned)
+```
+
+The surface matters more than the argmin. The criterion is evaluated on the
+same matrix that selected the parameters, so the minimum is optimistically
+biased; and if the lines are flat, the data are not really distinguishing the
+candidates. Read the plot before quoting the selected values.
+
+Note also how much more the threshold moves the criterion than `lambda` does.
+That is typical.
+
+### How many factors?
+
+`n_factors()` admits communities one at a time, largest first, and records how
+much covariance is left unexplained.
+
+```{r, fig.height = 4}
+nf <- n_factors(sim, part)
+nf
+plot(nf)
+```
+
+The whole path costs one pass over the data plus $O(K^3)$, not $K$ separate
+fits: $\hat a_{kk}$ and $\hat b_{kk'}$ depend only on their own blocks, so
+admitting more communities never changes the ones already in.
+
+Here the curve flattens after the eighth community — the ninth is the
+low-correlation residue visible in the bottom-right of the heat map.
+
+### Fitting the model
+
+```{r}
+fit <- scfa(sim, part)
+fit
+```
+
+With variables ordered by community the model is
+
+$$X = Lf + u, \qquad \Sigma = L\Sigma_f L^\top + \Sigma_u,$$
+
+with $L = \mathrm{Bdiag}(1_{p_1}, \dots, 1_{p_K})$, $\Sigma_f = (b_{kk'})$ and
+$\Sigma_u = \mathrm{Bdiag}(a_{11}I_{p_1}, \dots, a_{KK}I_{p_K})$. Every
+parameter has a closed form:
+
+$$\hat a_{kk} = \frac{p_k \operatorname{tr}(S_{kk}) - \operatorname{sum}(S_{kk})}{p_k(p_k-1)},
+\qquad
+\hat b_{kk'} = \frac{\operatorname{sum}(S_{kk'})}{p_k p_{k'}} \quad (k \neq k').$$
+
+These are uniformly minimum-variance unbiased whenever $K + K(K+1)/2 < n$.
+
+```{r}
+round(fit$Sigma_f[1:4, 1:4], 3)   # factor covariance
+round(fit$a[1:4], 3)              # error variance per community
+dim(fit$scores)                   # factor scores
+```
+
+The factor scores are just the community means of the centred data. That is not
+a shortcut: Theorem 2 of Yang et al. (2024) shows the OLS, GLS and feasible GLS
+estimators all coincide under this $\Sigma_u$.
+
+### Inference
+
+The paper also derives exact variances, so Wald intervals need no bootstrap.
+
+```{r}
+head(confint(fit), 6)
+```
+
+```{r}
+summary(fit)
+```
+
+`coef()`, `vcov()`, `fitted()`, `residuals()`, `predict()` and `nobs()` behave
+as you would expect, and `factor_loadings()` builds $\hat L$ on demand.
+
+```{r}
+dim(factor_loadings(fit))
+head(sigma_u(fit))
+```
+
+## Why it scales
+
+The estimators above depend on the sample covariance matrix $S$ only through
+$\operatorname{sum}(S_{kk'})$ and $\operatorname{tr}(S_{kk})$. Both follow from
+a single pass over the data: the within-community sums $T = X_c L$, which is
+$n \times K$, and the per-variable sums of squares.
+
+So $S$ is never formed. `scfa()` costs $O(np + nK^2)$ rather than $O(np^2)$,
+and its memory is $O(nK + p)$ rather than $O(p^2)$. Fit criteria use the
+$n \times n$ Gram matrix, giving $O(n^2 p)$, which is the right way round when
+$p \gg n$.
+
+In practice a fit at $p = 50{,}000$ takes a few seconds. Forming the covariance
+matrix alone at that size would need 20 GB.
+
+Detection is compiled: the thresholded matrix is held once in compressed sparse
+row form and the adaptive loop runs entirely in C++, so no shrinking submatrix
+is ever copied.
+
+## Migrating from 0.1.x
+
+Old names still work and warn once per session.
+
+| 0.1.x | 0.2.0 |
+| --- | --- |
+| `dense()` | `icons_detect()` |
+| `param_tuning_sigmau()` | `icons_tune()` |
+| `k.elbow()` | `n_factors()` |
+| `plotMatrix()` | `plot_matrix()` |
+| `get_membership()` | `as_membership()` |
+| `get_index()` | `block_index()` |
+| `get_vectorform()` | `half_vec()` |
+
+`scfa()` keeps its name but takes a partition object or a membership vector in
+place of the `CID`/`Clist` pair:
+
+```{r, eval = FALSE}
+# 0.1.x
+res <- dense(W, 0.6, 0.5)
+fa  <- scfa(sim, res$CID, res$Clist)
+
+# 0.2.0
+part <- icons_detect(W, threshold = 0.6, lambda = 0.5)
+fit  <- scfa(sim, part)
+```
+
+Results will differ, deliberately. 0.1.x reported `cov(F_hat)` as the factor
+covariance; Theorem 3 gives
+$\operatorname{cov}(\hat f) = \Sigma_f + \operatorname{diag}(a_{kk}/p_k)$
+exactly, so that estimator is biased upward on the diagonal. You can see the
+identity directly:
+
+```{r}
+round(diag(cov(fit$scores)) - (diag(fit$Sigma_f) + fit$a / fit$sizes), 12)
+```
+
+To reproduce numbers published with 0.1.x, use `criterion = "legacy"`, which
+recreates the old tuning objective exactly.
+
+## References
+
+Yang, Y., Ma, T., Bi, C., & Chen, S. (2024). Semi-confirmatory factor analysis
+for high-dimensional data with interconnected community structures.
+*arXiv:2401.00624*.
+
+Yang, Y., Chen, C., & Chen, S. (2024). Covariance matrix estimation for
+high-throughput biomedical data with interconnected communities.
+*The American Statistician*, 78(4), 401–411.
+
+Chen, S., Zhang, Y., Wu, Q., Bi, C., Kochunov, P., & Hong, L. E. (2024).
+Identifying covariate-related subnetworks for whole-brain connectome analysis.
+*Biostatistics*, 25(2), 541–558.
+
+Wu, Q., Huang, X., Culbreth, A. J., Waltz, J. A., Hong, L. E., & Chen, S.
+(2022). Extracting brain disease-related connectome subgraphs by adaptive dense
+subgraph discovery. *Biometrics*, 78(4), 1566–1578.

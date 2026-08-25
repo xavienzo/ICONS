@@ -4,9 +4,17 @@
 \name{ICONS-package}
 \alias{ICONS}
 \alias{ICONS-package}
-\title{ICONS: Integrative analysis of covariance matrix and network structure}
+\title{ICONS: Integrative Analysis of Covariance Matrices and Network Structure}
 \description{
-This package provides tools for performing community detection and semi-confirmatory factor analysis in statistical computing environments.
+Detects interconnected community structure in a large covariance or correlation matrix with an adaptive greedy peeling algorithm, and uses the detected communities to specify the non-zero loadings of a semi-confirmatory factor analysis (SCFA) model. All SCFA parameters -- factor loadings, the covariance matrix of the common factors, error variances, and factor scores -- have closed-form maximum likelihood estimators that are uniformly minimum-variance unbiased, together with exact variance estimators for Wald inference. Estimation never forms a p-by-p matrix, so the method scales to tens of thousands of observed variables. Methods are described in Yang, Ma, Bi and Chen (2024) \doi{10.48550/arXiv.2401.00624}, Yang, Chen and Chen (2024) \doi{10.1080/00031305.2024.2329681}, Chen, Zhang, Wu, Bi, Kochunov and Hong (2024) \doi{10.1093/biostatistics/kxad007}, and Wu, Huang, Culbreth, Waltz, Hong and Chen (2022) \doi{10.1111/biom.13537}.
+}
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/xavienzo/ICONS}
+  \item Report bugs at \url{https://github.com/xavienzo/ICONS/issues}
+}
+
 }
 \author{
 \strong{Maintainer}: Yezhi Pan \email{yezhipan7@gmail.com} (\href{https://orcid.org/0009-0001-4014-0302}{ORCID})

@@ -1,5 +1,15 @@
 ^ICONS\.Rproj$
 ^\.Rproj\.user$
-^[.].*$
-^.*/[.].*$
+^\.github$
+^\.git$
+^\.gitignore$
+^\.DS_Store$
+^.*/\.DS_Store$
+^\.Rhistory$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^cran-comments\.md$
+^CRAN-SUBMISSION$
 ^LICENSE\.md$
+^revdep$

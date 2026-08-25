@@ -1,20 +1,46 @@
 Package: ICONS
-Title: Integrative analysis of covariance matrix and network structure
-Version: 0.1.9
-Authors@R: 
-    person(given = "Yezhi", family = "Pan", 
-	   email = "yezhipan7@gmail.com", 
-	   role = c("aut", "cre"),
+Title: Integrative Analysis of Covariance Matrices and Network Structure
+Version: 0.2.0
+Authors@R:
+    person("Yezhi", "Pan", email = "yezhipan7@gmail.com",
+           role = c("aut", "cre"),
            comment = c(ORCID = "0009-0001-4014-0302"))
-Description: This package provides tools for performing community detection and semi-confirmatory factor analysis in statistical computing environments.
+Description: Detects interconnected community structure in a large covariance
+    or correlation matrix with an adaptive greedy peeling algorithm, and uses
+    the detected communities to specify the non-zero loadings of a
+    semi-confirmatory factor analysis (SCFA) model.  All SCFA parameters --
+    factor loadings, the covariance matrix of the common factors, error
+    variances, and factor scores -- have closed-form maximum likelihood
+    estimators that are uniformly minimum-variance unbiased, together with
+    exact variance estimators for Wald inference.  Estimation never forms a
+    p-by-p matrix, so the method scales to tens of thousands of observed
+    variables.  Methods are described in Yang, Ma, Bi and Chen (2024)
+    <doi:10.48550/arXiv.2401.00624>, Yang, Chen and Chen (2024)
+    <doi:10.1080/00031305.2024.2329681>, Chen, Zhang, Wu, Bi, Kochunov and
+    Hong (2024) <doi:10.1093/biostatistics/kxad007>, and Wu, Huang, Culbreth,
+    Waltz, Hong and Chen (2022) <doi:10.1111/biom.13537>.
 License: MIT + file LICENSE
+URL: https://github.com/xavienzo/ICONS
+BugReports: https://github.com/xavienzo/ICONS/issues
 Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
-Depends: 
-    R (>= 2.10)
-LazyData: true
-Suggests: 
+Language: en-US
+Depends:
+    R (>= 3.5.0)
+Imports:
+    Rcpp,
+    grDevices,
+    graphics,
+    parallel,
+    stats,
+    utils
+LinkingTo:
+    Rcpp
+Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2

@@ -1,120 +1,170 @@
-# ICONS: Integrative analysis of COvariance matrix and Network Structure
-## ICONS 0.1.3
+# ICONS
+
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/xavienzo/ICONS/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/xavienzo/ICONS/actions/workflows/R-CMD-check.yaml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+<!-- badges: end -->
+
+**I**ntegrative analysis of **CO**variance matrices and **N**etwork **S**tructure.
+
+High-dimensional biomedical data — genomics, proteomics, metabolomics,
+neuroimaging — tend to have covariance matrices with *interconnected community
+structure*: groups of mutually correlated features, the groups themselves
+correlated, plus features that belong to no group. ICONS finds that structure
+and uses it to fit a factor model.
+
+Confirmatory factor analysis needs you to know in advance which variables load
+on which factor, and does not scale past a few hundred variables. ICONS solves
+both problems: the communities are learned from the data, and every parameter
+has a closed-form maximum likelihood estimator, so there is no optimiser to
+converge.
+
 ## Installation
-You can install the development version `ICONS` package directly from GitHub using the `devtools` package:
 
 ```r
-# Install devtools if you haven't already
-install.packages("devtools")
-# Install SCFA from GitHub
+# install.packages("devtools")
 devtools::install_github("xavienzo/ICONS")
 ```
 
-Major versions will be uploaded to CRAN. Updates will be annouced here when available.
-
 ## Usage
 
-### Example dataset
 ```r
-# A simulated dataset named `sim` with 100 variables and 100 observations
-data(sim)
-matrix <- cor(sim)
+library(ICONS)
+data(sim)                       # 100 observations, 200 variables
+
+W <- cor(sim)
 ```
 
-### Subnetwork extraction
-```r
-results <- dense(matrix)
-# Number of nodes in each dense subnetwork
-results$CID
-# Index of reordered nodes
-results$Clist
-# Reordered correlation matrix
-results$W_dense
-```
-### Parameter tuning
-```r
-# specify a vector of cutout thresholds and a vector of lambdas for grid search
-prctile_vec <- seq(94, 99, by = 0.5)
-lam_vec <- seq(0.4, 0.8, length.out = 5)
+### 1. Detect communities
 
-# grid search
-# Paralell computing default to TRUE
-param <- param_tuning_sigmau(matrix, sim, prctile_vec, lam_vec, use_parallel = T)
-
-# use optimal parameters to extract subnetworks
-results <- dense(W_original = matrix, threshold = param$cut_out, lambda = param$lambda_out)
-# Number of nodes in each dense subnetwork
-results$CID
-# Index of reordered nodes
-results$Clist
-# Reordered correlation matrix
-results$W_dense
+```r
+part <- icons_detect(W, threshold = 0.6)
+part
+#> <ICONS partition>
+#>   variables   : 200
+#>   communities : 9
+#>   singletons  : 1
+#>   threshold   : 0.6   lambda: 0.5
+#>   sizes       : 20 20 20 15 15 15 15 15 64
 ```
 
-### Visualization
+Give the threshold as a quantile of the edge weights instead, if that is easier
+to reason about:
+
 ```r
-# Plot the original correlation matrix without diagonal values
-matrix_wodiag <- matrix - diag(diag(matrix)) #Remove the diagonal elements
-
-# To save the plot as a file, uncomment the lines
-plotMatrix(matrix_wodiag, 
-           # save.image = T, 
-           # filepath = "simulation_orig.png", 
-           # format = "png",
-           cex.axis = 1.3, cex.lab = 1.3)
-
-# Plot the reordered correlation matrix showing network structures
-# To save the plot as a file, uncomment the lines
-plotMatrix(results$W_dense, 
-           # save.image = T, 
-           # filepath = "figure/simulation_dense.png", 
-           # format = "png",
-           cex.axis = 1.3, cex.lab = 1.3)
+icons_detect(W, probs = 0.95)
 ```
-<div style="display: flex; justify-content: space-between;">
-  <div style="text-align: center; width: 40%;">
-    <p><strong>Original</strong></p>
-    <img src="https://github.com/user-attachments/assets/4536fe79-8d64-4619-98a6-b2fa3fb4495e" alt="sim" style="width: 40%;"/>
-  </div>
-  <div style="text-align: center; width: 40%;">
-    <p><strong>After subnetwork extraction</strong></p>
-    <img src="https://github.com/user-attachments/assets/be9b0f12-ac41-4ea0-b153-3d9066d9291e" alt="sim_dense" style="width: 40%;"/>
-  </div>
-</div>
 
-### SCFA (Semi-confirmatory factor analysis)
+### 2. Tune, if you want the data to pick the settings
+
 ```r
-# perform SCFA
-# method default to "Sample", alternative is "MLE"
-fa <- scfa(sim, results$CID, results$Clist)
-fa_mle <- scfa(sim, results$CID, results$Clist, method = "MLE")
+tuned <- icons_tune(W, sim, probs = seq(0.90, 0.99, 0.01),
+                    lambda = c(0.4, 0.5, 0.6, 0.7, 0.8))
+tuned
+plot(tuned)                     # the whole criterion surface
 
-# factor loadings
-fa$loading
-# factor scores
-fa$factorscore
-
-# Covariance matrix of the factor scores
-plotMatrix(cov(t(fa$factorscore)))
-plotMatrix(cov(t(fa_mle$factorscore)))
-
-# Residual matrix after factor estimation
-plotMatrix(fa$sigma_u)
-plotMatrix(fa_mle$sigma_u)
-
-# Elbow method to choose k
-k_sigmau <- k.elbow(sim, results$CID, results$Clist)
-plot(k_sigmau)
+part <- icons_detect(W, threshold = tuned$threshold, lambda = tuned$lambda)
 ```
+
+The threshold matters far more than `lambda`. A flat criterion surface means
+the choice is not well identified — worth knowing before you report it.
+
+### 3. Choose the number of factors
+
+```r
+nf <- n_factors(sim, part)
+nf$suggested
+plot(nf)
+```
+
+### 4. Fit the factor model
+
+```r
+fit <- scfa(sim, part)
+fit
+#> <Semi-confirmatory factor analysis>
+#>   observations : 100
+#>   variables    : 200 (199 modelled, 1 singleton)
+#>   factors      : 9
+#>   Sigma_u      : mle
+#>   frobenius criterion: 16.25  (relative 0.3365)
+
+fit$scores                      # n x K factor scores
+fit$Sigma_f                     # K x K factor covariance
+fit$a                           # error variance per community
+
+summary(fit)                    # estimates with Wald intervals
+confint(fit)                    # exact, from Theorem 3
+```
+
+Standard extractors work as expected: `coef()`, `vcov()`, `confint()`,
+`fitted()`, `residuals()`, `predict()`, `nobs()`, plus `factor_loadings()` and
+`sigma_u()`.
+
+### 5. Look at it
+
+```r
+plot_matrix(W, main = "Original")
+plot_matrix(reorder_matrix(W, part), partition = part, main = "Reordered")
+```
+
+## What changed in 0.2.0
+
+0.2.0 is a rewrite. Three things are worth calling out.
+
+**The estimator is now the published one.** ICONS 0.1.x estimated the factor
+covariance as `cov(F_hat)`. Theorem 3 of Yang et al. (2024) shows that
+`cov(F_hat) = Sigma_f + diag(a_kk / p_k)` exactly, so that overstates every
+factor variance by `a_kk / p_k` — 12.5% for a community of 8 with
+`a = 0.5, b = 0.5`, and worse for small or noisy communities. 0.2.0 uses the
+closed-form UMVUEs from their equation (4), and adds the exact standard errors
+the paper derives, which 0.1.x did not expose at all.
+
+**Nothing forms a `p` by `p` matrix.** The estimators depend on the sample
+covariance only through `sum(S_kk')` and `tr(S_kk)`, and both fall out of a
+single pass over the data. `scfa()` is `O(np + nK^2)` rather than `O(np^2)`;
+the fit criteria use the `n` by `n` Gram matrix. At `p = 50000` a fit takes a
+few seconds, where 0.1.x would have needed a 20 GB covariance matrix.
+
+**Several real bugs are fixed** — including `greedy_peeling()` returning a node
+list with a duplicate, `dense()` leaving one variable unassigned, and
+`param_tuning_sigmau()` aborting the entire grid search whenever one cell
+produced a single community. See [NEWS.md](NEWS.md).
+
+Speedups against 0.1.9, at p = 1000–4000: roughly 9–14x for detection,
+180–800x for `scfa()`, and 300x for the factor-count path.
+
+Old function names still work and warn once:
+
+| 0.1.x | 0.2.0 |
+| --- | --- |
+| `dense()` | `icons_detect()` |
+| `param_tuning_sigmau()` | `icons_tune()` |
+| `k.elbow()` | `n_factors()` |
+| `plotMatrix()` | `plot_matrix()` |
+| `get_membership()` | `as_membership()` |
+| `get_index()` | `block_index()` |
+| `get_vectorform()` | `half_vec()` |
+
+## References
+
+1. Yang, Y., Ma, T., Bi, C., & Chen, S. (2024). Semi-confirmatory factor
+   analysis for high-dimensional data with interconnected community structures.
+   *arXiv:2401.00624*.
+2. Yang, Y., Chen, C., & Chen, S. (2024). Covariance matrix estimation for
+   high-throughput biomedical data with interconnected communities.
+   *The American Statistician*, 78(4), 401–411.
+3. Chen, S., Zhang, Y., Wu, Q., Bi, C., Kochunov, P., & Hong, L. E. (2024).
+   Identifying covariate-related subnetworks for whole-brain connectome
+   analysis. *Biostatistics*, 25(2), 541–558.
+4. Wu, Q., Huang, X., Culbreth, A. J., Waltz, J. A., Hong, L. E., & Chen, S.
+   (2022). Extracting brain disease-related connectome subgraphs by adaptive
+   dense subgraph discovery. *Biometrics*, 78(4), 1566–1578.
 
 ## License
-This package is licensed under the MIT License. See the LICENSE file for more details.
+
+MIT. See [LICENSE](LICENSE).
 
 ## Contact
-For questions or comments, please contact `ypan@som.umaryland.edu`
 
-## Reference
-
-1. Wu Q, Huang X, Culbreth AJ, Waltz JA, Hong LE, Chen S. Extracting brain disease-related connectome subgraphs by adaptive dense subgraph discovery. Biometrics. 2022 Dec;78(4):1566-1578. doi: 10.1111/biom.13537. Epub 2021 Aug 22. PMID: 34374075; PMCID: PMC10396394.
-2. Shuo Chen, Yuan Zhang, Qiong Wu, Chuan Bi, Peter Kochunov, L Elliot Hong, Identifying covariate-related subnetworks for whole-brain connectome analysis, Biostatistics, 2023;, kxad007, https://doi.org/10.1093/biostatistics/kxad007
-3. Yang Y, Ma T, Bi C, Chen S. Semi-confirmatory factor analysis for high-dimensional data with interconnected community structures. arXiv [statME]. 2024. http://arxiv.org/abs/2401.00624.
+`ypan@som.umaryland.edu`

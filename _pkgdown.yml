@@ -1,0 +1,54 @@
+url: https://xavienzo.github.io/ICONS/
+
+template:
+  bootstrap: 5
+
+reference:
+  - title: Community detection
+    desc: Find the interconnected community structure of a covariance matrix.
+    contents:
+      - icons_detect
+      - greedy_peeling
+      - icons_tune
+
+  - title: Semi-confirmatory factor analysis
+    desc: Fit the factor model the detected communities imply.
+    contents:
+      - scfa
+      - n_factors
+      - scfa_criterion
+
+  - title: Extracting results
+    contents:
+      - coef.scfa
+      - vcov.scfa
+      - confint.scfa
+      - fitted.scfa
+      - residuals.scfa
+      - predict.scfa
+      - factor_loadings
+      - sigma_u
+      - as_membership
+      - block_index
+
+  - title: Visualisation
+    contents:
+      - plot_matrix
+      - reorder_matrix
+      - plot.icons_partition
+      - plot.icons_tune
+      - plot.icons_nfactors
+
+  - title: Utilities and data
+    contents:
+      - half_vec
+      - sim
+
+  - title: Deprecated
+    contents:
+      - ICONS-deprecated
+
+articles:
+  - title: Getting started
+    contents:
+      - ICONS
